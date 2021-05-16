@@ -16,10 +16,14 @@ public class ScrollAndPinch : MonoBehaviour
     private float movethershhold_factor = 1;
     [SerializeField]
     private float move_sensitivity;
+    [SerializeField]
+    private float t;
 
-
+    private float elapsedtime = 0f;
     private float move_inertia = 0;
     private bool inertiatoggle = false;
+    private Vector3 Delta2 = Vector3.zero;
+    private Vector3 Delta3 = Vector3.zero;
 
     //if camera is null, put maincamera in Camera
     private void Awake()
@@ -30,28 +34,66 @@ public class ScrollAndPinch : MonoBehaviour
 
     private void Update()
     {
-
+        
         //Update Plane
         if (Input.touchCount >= 1)
             Plane.SetNormalAndPosition(transform.up, transform.position);
 
         var Delta1 = Vector3.zero;
-        var Delta2 = Vector3.zero;
 
         //Scroll
         //Scroll when touchcount is 1
         if (Input.touchCount == 1)
         {
-            Delta1 = PlanePositionDelta(Input.GetTouch(0));
-            if (Input.GetTouch(0).phase == TouchPhase.Moved)
-                //Debug.Log("xvalue : " + Delta1.x + "   yvalue : " + Delta1.y + "    zvalue : " + Delta1.z);
-                Camera.transform.Translate(Delta1 * movethershhold_factor, Space.World);
-
             
+            elapsedtime += Time.deltaTime;
+            if (elapsedtime >= 0.3f){
+                elapsedtime = elapsedtime % elapsedtime;
+                //Debug.Log("second has been elapsed" + elapsedtime);
+                Delta2 = PlanePositionNow(Input.GetTouch(0));
+                //Debug.Log("Delta2   " + Delta2);
+            }
+            
+
+
+            Delta1 = PlanePositionDelta(Input.GetTouch(0));
+
+            if (Input.GetTouch(0).phase == TouchPhase.Moved || Input.GetTouch(0).phase == TouchPhase.Ended){
+                Camera.transform.Translate(Delta1 * movethershhold_factor, Space.World);
+                if (Input.GetTouch(0).phase == TouchPhase.Ended){
+                    Delta3 = Delta1;
+                    inertiatoggle = true;
+                }
+                //Debug.Log("Endede"+ Delta1);
+            }
+
+
+                //Debug.Log("x  :  " + Mathf.Abs(Delta1.x) + "  z  :  " + Mathf.Abs(Delta1.z));
+            //if (Mathf.Abs(Delta1.x) + Mathf.Abs(Delta1.z) >= 10){
+                //Delta2 = Delta1;
+                //Debug.Log("Delta1 is over the treshold" + Delta2);
+                //Debug.Log("Delta1 is  over the threshold");
+            //}
+            //else
+                //Delta2 = Vector3.zero;
+                //Debug.Log("xvalue : " + Delta2.x + "   yvalue : " + Delta2.y + "    zvalue : " + Delta2.z);
+            
+            /*
+            if(Input.GetTouch(0).phase == TouchPhase.Ended){
+                Vector3 recentDelta = PlanePositionNow(Input.GetTouch(0)); //- Delta2;
+                Debug.Log("recentDelta   " + recentDelta);
+                Vector3 recentmovementDelta = Delta2 - recentDelta;
+                Debug.Log("recnetmovementeDelta" + recentmovementDelta);
+            
+                //Debug.Log(Delta2);
+                //Camera.transform.position = Vector3.Lerp(transform.position, transform.position + Delta2 * 0.1f ,t*Time.deltaTime);
+                //Debug.Log("xvalue : " + Delta1.x + "   yvalue : " + Delta1.y + "    zvalue : " + Delta1.z);
+            }
+            */
             //Debug.Log(Mathf.Abs(Delta1.x + Delta1.z));
             /*
             if (Mathf.Abs(Delta1.x)+Mathf.Abs(Delta1.z)>=10)
-            {
+            {over the threshol
                 Debug.Log("Inertia assigned");
                 move_inertia = 1;   
             }
@@ -74,6 +116,11 @@ public class ScrollAndPinch : MonoBehaviour
                 }
             }
             */
+        }
+
+        if (inertiatoggle == true){
+            Camera.transform.position = Vector3.Lerp(Camera.transform.position , Camera.transform.position + Delta3 * 10, t*Time.deltaTime );
+            Debug.Log("inertia applied");
         }
 
         //Pinch
@@ -118,9 +165,10 @@ public class ScrollAndPinch : MonoBehaviour
     protected Vector3 PlanePositionDelta(Touch touch)
     {
         //not moved
+        /*
         if (touch.phase != TouchPhase.Moved)
             return Vector3.zero;
-
+        */
         //delta
         var rayBefore = Camera.ScreenPointToRay(touch.position - touch.deltaPosition);
         var rayNow = Camera.ScreenPointToRay(touch.position);
@@ -134,7 +182,13 @@ public class ScrollAndPinch : MonoBehaviour
         //not on plane
         return Vector3.zero;
     }
-
+    protected Vector3 PlanePositionNow(Touch touch){
+        var rayNow = Camera.ScreenPointToRay(touch.position);
+        if (Plane.Raycast(rayNow, out var enterNow)){
+            return rayNow.GetPoint(enterNow);
+        }
+        return Vector3.zero;
+    }
     protected Vector3 PlanePosition(Vector2 screenPos)
     {
         //position

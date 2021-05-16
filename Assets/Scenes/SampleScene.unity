@@ -2218,6 +2218,7 @@ MonoBehaviour:
   zoomthreshhold: 0
   movethershhold_factor: 0.7
   move_sensitivity: 0
+  t: 0.12
 --- !u!1 &2059564448
 GameObject:
   m_ObjectHideFlags: 0
