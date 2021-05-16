@@ -22,7 +22,7 @@ public class ScrollAndPinch : MonoBehaviour
     private float elapsedtime = 0f;
     private float move_inertia = 0;
     private bool inertiatoggle = false;
-    private Vector3 Delta2 = Vector3.zero;
+    private Vector3 Touchphase_endposition = Vector3.zero;
     private Vector3 Delta3 = Vector3.zero;
 
     //if camera is null, put maincamera in Camera
@@ -45,7 +45,7 @@ public class ScrollAndPinch : MonoBehaviour
         //Scroll when touchcount is 1
         if (Input.touchCount == 1)
         {
-            
+            /* 
             elapsedtime += Time.deltaTime;
             if (elapsedtime >= 0.3f){
                 elapsedtime = elapsedtime % elapsedtime;
@@ -53,16 +53,20 @@ public class ScrollAndPinch : MonoBehaviour
                 Delta2 = PlanePositionNow(Input.GetTouch(0));
                 //Debug.Log("Delta2   " + Delta2);
             }
-            
+            */
 
 
             Delta1 = PlanePositionDelta(Input.GetTouch(0));
-
+            if (Input.GetTouch(0).phase == TouchPhase.Began){
+                inertiatoggle = false;
+            }
             if (Input.GetTouch(0).phase == TouchPhase.Moved || Input.GetTouch(0).phase == TouchPhase.Ended){
                 Camera.transform.Translate(Delta1 * movethershhold_factor, Space.World);
                 if (Input.GetTouch(0).phase == TouchPhase.Ended){
+                    Touchphase_endposition = Camera.transform.position;
                     Delta3 = Delta1;
                     inertiatoggle = true;
+                    elapsedtime = 0f;
                 }
                 //Debug.Log("Endede"+ Delta1);
             }
@@ -117,10 +121,22 @@ public class ScrollAndPinch : MonoBehaviour
             }
             */
         }
+        
+
+        //TODO:
+        //OK//일정 시간이 지나면 멈추도록 구현
+        //OK//멈추면 inertia toggle off
+        //Inertiatogggle 이 켜지는 조건이 특정 treshold 를 넘도록 설정하여 과도한 리소르를 잡아먹지 않도록 최적화 + zoom factor 고려해야함
+        //OK//inertia motion이 진행되는 중 touchinput이 들어오면 interrupt해야함.
 
         if (inertiatoggle == true){
-            Camera.transform.position = Vector3.Lerp(Camera.transform.position , Camera.transform.position + Delta3 * 10, t*Time.deltaTime );
+            Camera.transform.position = Vector3.Lerp(Camera.transform.position , Touchphase_endposition + (Delta3 * 1.5f), 100*t*Time.deltaTime );
             Debug.Log("inertia applied");
+            elapsedtime += Time.deltaTime;
+            if(elapsedtime >=1f){
+                inertiatoggle = false;
+                Debug.Log("inertia toggle off");
+            } 
         }
 
         //Pinch
