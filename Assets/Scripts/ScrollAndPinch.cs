@@ -184,6 +184,10 @@ public class ScrollAndPinch : MonoBehaviour
             //TODO:
             // 첫번째로 손가락을 댄 부분을 기준으로 도는것이 아닌, 두 지점의 중간점을 기준으로 회전해야함
             
+            //TODO:
+            //zoom이 끝난 후, 일정시간 scroll을 neglect하도록 하여 zoom시 튐현상 방지해야함.
+            
+            
             //Vector3 pos3 = pos1;
             //Vector3 position = (pos1 + pos2) / 2;
             if (Rotate && pos2b != pos2) {
