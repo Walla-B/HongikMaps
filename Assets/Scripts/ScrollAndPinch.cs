@@ -4,11 +4,10 @@ using UnityEngine;
 
 public class ScrollAndPinch : MonoBehaviour
 {   
-    
     public Camera Camera;
     public bool Rotate;
     
-    protected Plane Plane = new Plane(Vector3.up, new Vector3(0,100,0));
+    protected Plane Plane; // = new Plane(Vector3.up, new Vector3(0,100,0));
     //protected Plane Plane;
     [SerializeField]
     private float zoomthreshhold = 0;
@@ -20,11 +19,18 @@ public class ScrollAndPinch : MonoBehaviour
     [SerializeField]
     private float t;
 
+    //맵이 위치한 평균 Y높이
+    [SerializeField]
+    private float plane_y_position = -10;
+
     private float elapsedtime = 0f;
     private float move_inertia = 0;
     private bool inertiatoggle = false;
     private Vector3 Touchphase_endposition = Vector3.zero;
     private Vector3 Delta3 = Vector3.zero;
+    //private Vector3 CenterOfScreen = PlanePositionDelta(new Vector2(Screen.Height / 2,Screen.width /2));
+
+    private Vector3 SceenCenterpos;
 
 
 
@@ -35,14 +41,14 @@ public class ScrollAndPinch : MonoBehaviour
     {
         if (Camera == null)
             Camera = Camera.main;
+
     }
 
     private void Update()
-    {
-        
+    {   
         //Update Plane
         if (Input.touchCount >= 1)
-            Plane.SetNormalAndPosition(transform.up, transform.position);
+            Plane.SetNormalAndPosition(transform.up, new Vector3(0,plane_y_position,0));
 
         var Delta1 = Vector3.zero;
 
@@ -183,16 +189,17 @@ public class ScrollAndPinch : MonoBehaviour
             //zoom camera for orthographic
             //TODO:
             // 첫번째로 손가락을 댄 부분을 기준으로 도는것이 아닌, 두 지점의 중간점을 기준으로 회전해야함
+            //TODO:
+            //zoom 이 끝난 후, 일정시간 scroll 을 neglect 하도록 하여 zoom 시 튐현상 방지할 수 있어야함.
             
             //Vector3 pos3 = pos1;
             //Vector3 position = (pos1 + pos2) / 2;
             if (Rotate && pos2b != pos2) {
                 Vector3 position = (pos1 + pos2) / 2;
-                Debug.Log(pos1 +" pos "+ pos2 + " ops " + position);
-                Vector3 newplaneposition = (Camera.transform.position + position) /2;
-                Camera.transform.RotateAround(newplaneposition, Plane.normal, Vector3.SignedAngle(pos2 - pos1, pos2b - pos1b, Plane.normal));
-                Instantiate(Debugobject,newplaneposition,Quaternion.identity);
+                Camera.transform.RotateAround(position, Plane.normal, Vector3.SignedAngle(pos2 - pos1, pos2b - pos1b, Plane.normal));
+                //Instantiate(Debugobject,position,Quaternion.identity);
                 //Object.Destroy(Debugobject,0.5f);
+                //instantiate 로 생성된 Object가 상대 좌표계를 따른다..?
             }
         }
 
@@ -219,6 +226,8 @@ public class ScrollAndPinch : MonoBehaviour
         //not on plane
         return Vector3.zero;
     }
+
+    /*
     protected Vector3 PlanePositionNow(Touch touch){
         var rayNow = Camera.ScreenPointToRay(touch.position);
         if (Plane.Raycast(rayNow, out var enterNow)){
@@ -226,6 +235,7 @@ public class ScrollAndPinch : MonoBehaviour
         }
         return Vector3.zero;
     }
+    */
     protected Vector3 PlanePosition(Vector2 screenPos)
     {
         //position
