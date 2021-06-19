@@ -192,6 +192,10 @@ public class ScrollAndPinch : MonoBehaviour
             //TODO:
             //zoom 이 끝난 후, 일정시간 scroll 을 neglect 하도록 하여 zoom 시 튐현상 방지할 수 있어야함.
             
+            //TODO:
+            //zoom이 끝난 후, 일정시간 scroll을 neglect하도록 하여 zoom시 튐현상 방지해야함.
+            
+            
             //Vector3 pos3 = pos1;
             //Vector3 position = (pos1 + pos2) / 2;
             if (Rotate && pos2b != pos2) {
