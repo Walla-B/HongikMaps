@@ -4,34 +4,28 @@ using UnityEngine;
 
 public class ScrollAndPinch : MonoBehaviour
 {   
+    //Visible Components
     public Camera Camera;
-    public bool Rotate;
-    
     protected Plane Plane; // = new Plane(Vector3.up, new Vector3(0,100,0));
-    //protected Plane Plane;
-    [SerializeField]
-    private float zoomthreshhold = 0;
+
     [SerializeField]
     //threshhold factor of camera when scrolling;
     private float movethershhold_factor = 1;
     [SerializeField]
-    private float move_sensitivity;
-    [SerializeField]
-    private float t;
+    private float t = 1.0f;
 
-    //맵이 위치한 평균 Y높이
+    //Average Y position of Map
     [SerializeField]
     private float plane_y_position = -10;
-
     private float elapsedtime = 0f;
-    private float move_inertia = 0;
     private bool inertiatoggle = false;
-    private Vector3 Touchphase_endposition = Vector3.zero;
-    private Vector3 Delta3 = Vector3.zero;
-    //private Vector3 CenterOfScreen = PlanePositionDelta(new Vector2(Screen.Height / 2,Screen.width /2));
+    private Vector3 Touchphase_endposition ,Delta3 = Vector3.zero;
 
-    private Vector3 SceenCenterpos;
 
+    private bool zoomflag, rotateflag, initdataflag = false;
+
+    private float init_zoomdist, temp_zoomdist, init_theta = 0f;
+    private Vector3 init_rotatepivot;
 
 
     public GameObject Debugobject;
@@ -46,6 +40,7 @@ public class ScrollAndPinch : MonoBehaviour
 
     private void Update()
     {   
+        
         //Update Plane
         if (Input.touchCount >= 1)
             Plane.SetNormalAndPosition(transform.up, new Vector3(0,plane_y_position,0));
@@ -66,7 +61,6 @@ public class ScrollAndPinch : MonoBehaviour
             }
             */
 
-
             Delta1 = PlanePositionDelta(Input.GetTouch(0));
             if (Input.GetTouch(0).phase == TouchPhase.Began){
                 inertiatoggle = false;
@@ -76,16 +70,17 @@ public class ScrollAndPinch : MonoBehaviour
                 if (Input.GetTouch(0).phase == TouchPhase.Ended){
                     Touchphase_endposition = Camera.transform.position;
                     Delta3 = Delta1;
-                    Debug.Log(Delta3);
+                    //Debug.Log(Delta3);
                     if (Mathf.Abs(Delta3.x) + Mathf.Abs(Delta3.z) > 3f){
                         inertiatoggle = true;
                         elapsedtime = 0f;
-                        Debug.Log("Passed threshold");
+                        //Debug.Log("Passed threshold");
                     }
                 }
                 //Debug.Log("Endede"+ Delta1);
             }
-
+            //Debug.Log("Touch position : " + Input.GetTouch(0).position);
+            //Debug.Log("Deltapostion : " + Input.GetTouch(0).deltaPosition);
 
                 //Debug.Log("x  :  " + Mathf.Abs(Delta1.x) + "  z  :  " + Mathf.Abs(Delta1.z));
             //if (Mathf.Abs(Delta1.x) + Mathf.Abs(Delta1.z) >= 10){
@@ -147,7 +142,7 @@ public class ScrollAndPinch : MonoBehaviour
         //Camera Max zoom & Min zoom 고려해야함
 
         if (inertiatoggle == true){
-            Camera.transform.position = Vector3.Lerp(Camera.transform.position , Touchphase_endposition + (Delta3 * 3f), 100*t*Time.deltaTime );
+            Camera.transform.position = Vector3.Lerp(Camera.transform.position , Touchphase_endposition + (Delta3 * 3f), 100* t *Time.deltaTime );
             //Debug.Log("inertia applied");
             elapsedtime += Time.deltaTime;
             if(elapsedtime >=1f){
@@ -157,12 +152,34 @@ public class ScrollAndPinch : MonoBehaviour
         }
 
         //Pinch
+        //TODO:
+        //Zoom, Rotate에도 inertia 구현할수있으면 해야함
+        //Zoom시 현재는 화면 중심을 기준으로 확대됨, 확대한 중심점이 기준이 되어 확대될수 있으면 좋을것같음
+        //ZoomOrRotate() 가 아직 뭔가 미흡함. 적절한 값을 찾아야함.
+
+        if (Input.touchCount != 2){
+            ClearFlag();
+            ClearZoomOrRotateParam();
+        }
         if (Input.touchCount >= 2)
         {
             var pos1  = PlanePosition(Input.GetTouch(0).position);
             var pos2  = PlanePosition(Input.GetTouch(1).position);
             var pos1b = PlanePosition(Input.GetTouch(0).position - Input.GetTouch(0).deltaPosition);
             var pos2b = PlanePosition(Input.GetTouch(1).position - Input.GetTouch(1).deltaPosition);
+            int ZorR;
+
+            //Debug.Log("DeltaPos1 : " + Input.GetTouch(0).deltaPosition);
+            //Debug.Log("DeltaPos2 : " + Input.GetTouch(1).deltaPosition);
+
+            if (initdataflag == false)
+            {
+                init_zoomdist = Vector3.Distance(pos1,pos2);
+                init_rotatepivot = (pos1 + pos2) / 2;
+                temp_zoomdist = init_zoomdist;
+                
+                initdataflag = true;
+            }
 
             //calc zoom
             /*var zoom = Vector3.Distance(pos1, pos2) /
@@ -170,10 +187,50 @@ public class ScrollAndPinch : MonoBehaviour
             */
             //calc zoom for orthographic
             var zoom = Vector3.Distance(pos1b,pos2b) / Vector3.Distance(pos1,pos2);
+            //var position = (pos1 + pos2) / 2;
+            float rotatetheta = Vector3.SignedAngle(pos2 - pos1, pos2b - pos1b, Plane.normal);
 
-            //edge case
             if (zoom == 0 || zoom > 10)
                 return;
+            /*
+            if (Rotate && pos2b != pos2) {
+                Vector3 position = (pos1 + pos2) / 2;
+                Camera.transform.RotateAround(position, Plane.normal, Vector3.SignedAngle(pos2 - pos1, pos2b - pos1b, Plane.normal));
+                
+                //Instantiate(Debugobject,position,Quaternion.identity);
+                //Object.Destroy(Debugobject,0.5f);
+                //instantiate 로 생성된 Object가 상대 좌표계를 따른다..?
+            }
+            */
+            if (zoomflag == true){
+                ZoomCamera(zoom);
+            }
+            else if (rotateflag == true){
+                RotateCamera(init_rotatepivot,rotatetheta);
+            }
+            else {
+                ZorR = ZoomOrRotate(rotatetheta,zoom);
+                if (ZorR == 0) //zoom
+                {
+                    zoomflag = true;
+                    rotateflag = false;
+                    //ZoomCamera(zoom);
+                }
+                else if (ZorR == 1) // rotate
+                {
+                    zoomflag = false;
+                    rotateflag = true;
+                    //RotateCamera(position,rotatetheta);
+                }
+                else if (ZorR == 2)
+                {
+                   return; 
+                }
+            }
+
+
+
+            //edge case
 
             //Move cam amount the mid ray
             //Camera.transform.position = Vector3.LerpUnclamped(pos1, Camera.transform.position, 1 / zoom);
@@ -184,27 +241,17 @@ public class ScrollAndPinch : MonoBehaviour
             {
             }
             */
-            Camera.orthographicSize = Camera.orthographicSize * zoom;
+            //Camera.orthographicSize = Camera.orthographicSize * zoom;
 
             //zoom camera for orthographic
             //TODO:
-            // 첫번째로 손가락을 댄 부분을 기준으로 도는것이 아닌, 두 지점의 중간점을 기준으로 회전해야함
+            //ROLLBACK:
+            // --첫번째로 손가락을 댄 부분을 기준으로 도는것이 아닌, 두 지점의 중간점을 기준으로 회전해야함--
             //TODO:
             //zoom 이 끝난 후, 일정시간 scroll 을 neglect 하도록 하여 zoom 시 튐현상 방지할 수 있어야함.
             
-            //TODO:
-            //zoom이 끝난 후, 일정시간 scroll을 neglect하도록 하여 zoom시 튐현상 방지해야함.
-            
-            
             //Vector3 pos3 = pos1;
             //Vector3 position = (pos1 + pos2) / 2;
-            if (Rotate && pos2b != pos2) {
-                Vector3 position = (pos1 + pos2) / 2;
-                Camera.transform.RotateAround(position, Plane.normal, Vector3.SignedAngle(pos2 - pos1, pos2b - pos1b, Plane.normal));
-                //Instantiate(Debugobject,position,Quaternion.identity);
-                //Object.Destroy(Debugobject,0.5f);
-                //instantiate 로 생성된 Object가 상대 좌표계를 따른다..?
-            }
         }
 
     }
@@ -248,6 +295,50 @@ public class ScrollAndPinch : MonoBehaviour
             return rayNow.GetPoint(enterNow);
 
         return Vector3.zero;
+    }
+
+    protected void ClearFlag(){
+        zoomflag = false;
+        rotateflag = false;
+        initdataflag = false;
+    }
+    protected void ClearZoomOrRotate(){
+        init_theta = 0f;
+
+    }
+    protected int ZoomOrRotate(float theta, float zoom){
+         
+        temp_zoomdist *= zoom;
+        init_theta += theta;
+
+        //Debug.Log("init_theta " + init_theta);
+        //Debug.Log("init_zoomdist " + init_zoomdist);
+        //Debug.Log("temp_zoomdist " + temp_zoomdist);
+
+        if (temp_zoomdist >= 1.15f * init_zoomdist || temp_zoomdist <= 0.85f * init_zoomdist)
+        {
+            return 0;
+        }
+        else if (Mathf.Abs(init_theta) >= 5.0f){
+            return 1;    
+        
+        }
+        else
+            return 2;
+        
+    }
+    protected void ClearZoomOrRotateParam(){
+        init_theta = 0f;
+        init_zoomdist = 0f;
+        temp_zoomdist = 0f;
+    }
+
+    protected void ZoomCamera(float zoom){
+        Camera.orthographicSize = Camera.orthographicSize * zoom;
+    }
+
+    protected void RotateCamera(Vector3 position , float theta){
+        Camera.transform.RotateAround(position, Plane.normal, theta / 2);
     }
 
     private void OnDrawGizmos()
