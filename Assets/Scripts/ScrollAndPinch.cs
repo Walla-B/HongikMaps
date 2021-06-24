@@ -19,14 +19,23 @@ public class ScrollAndPinch : MonoBehaviour
     private float plane_y_position = -10;
     private float elapsedtime = 0f;
     private bool inertiatoggle = false;
+    private int recent_touch_is_two = 0;
     private Vector3 Touchphase_endposition ,Delta3 = Vector3.zero;
 
 
     private bool zoomflag, rotateflag, initdataflag = false;
 
     private float init_zoomdist, temp_zoomdist, init_theta = 0f;
-    private Vector3 init_rotatepivot;
+    private Vector3 init_pivot;
+    private Vector2 ScreenCenter = new Vector2(Screen.width/2,Screen.height/2);
 
+
+    [SerializeField]
+    const float threshhold_ZIn = 1.13f;
+    [SerializeField]
+    const float threshhold_ZOut = 0.87f;
+    [SerializeField]
+    const float threshhold_theta = 3.5f;
 
     public GameObject Debugobject;
 
@@ -51,15 +60,12 @@ public class ScrollAndPinch : MonoBehaviour
         //Scroll when touchcount is 1
         if (Input.touchCount == 1)
         {
-            /* 
-            elapsedtime += Time.deltaTime;
-            if (elapsedtime >= 0.3f){
-                elapsedtime = elapsedtime % elapsedtime;
-                //Debug.Log("second has been elapsed" + elapsedtime);
-                Delta2 = PlanePositionNow(Input.GetTouch(0));
-                //Debug.Log("Delta2   " + Delta2);
+
+            if (recent_touch_is_two >= 0)
+            {
+                recent_touch_is_two -= 1;
+                return;   
             }
-            */
 
             Delta1 = PlanePositionDelta(Input.GetTouch(0));
             if (Input.GetTouch(0).phase == TouchPhase.Began){
@@ -79,57 +85,7 @@ public class ScrollAndPinch : MonoBehaviour
                 }
                 //Debug.Log("Endede"+ Delta1);
             }
-            //Debug.Log("Touch position : " + Input.GetTouch(0).position);
-            //Debug.Log("Deltapostion : " + Input.GetTouch(0).deltaPosition);
 
-                //Debug.Log("x  :  " + Mathf.Abs(Delta1.x) + "  z  :  " + Mathf.Abs(Delta1.z));
-            //if (Mathf.Abs(Delta1.x) + Mathf.Abs(Delta1.z) >= 10){
-                //Delta2 = Delta1;
-                //Debug.Log("Delta1 is over the treshold" + Delta2);
-                //Debug.Log("Delta1 is  over the threshold");
-            //}
-            //else
-                //Delta2 = Vector3.zero;
-                //Debug.Log("xvalue : " + Delta2.x + "   yvalue : " + Delta2.y + "    zvalue : " + Delta2.z);
-            
-            /*
-            if(Input.GetTouch(0).phase == TouchPhase.Ended){
-                Vector3 recentDelta = PlanePositionNow(Input.GetTouch(0)); //- Delta2;
-                Debug.Log("recentDelta   " + recentDelta);
-                Vector3 recentmovementDelta = Delta2 - recentDelta;
-                Debug.Log("recnetmovementeDelta" + recentmovementDelta);
-            
-                //Debug.Log(Delta2);
-                //Camera.transform.position = Vector3.Lerp(transform.position, transform.position + Delta2 * 0.1f ,t*Time.deltaTime);
-                //Debug.Log("xvalue : " + Delta1.x + "   yvalue : " + Delta1.y + "    zvalue : " + Delta1.z);
-            }
-            */
-            //Debug.Log(Mathf.Abs(Delta1.x + Delta1.z));
-            /*
-            if (Mathf.Abs(Delta1.x)+Mathf.Abs(Delta1.z)>=10)
-            {over the threshol
-                Debug.Log("Inertia assigned");
-                move_inertia = 1;   
-            }
-            if (Input.GetTouch(0).phase == TouchPhase.Ended)
-            {   
-                Debug.Log("inertia toggled on");
-                inertiatoggle = true;
-            }
-
-            while (inertiatoggle == true)
-            {
-                Camera.transform.Translate(Delta1 * movethershhold_factor * move_inertia , Space.World);
-                move_inertia -= 0.0001f;
-                //Debug.Log(move_inertia);
-                
-                if (move_inertia <= 0.001f)
-                {
-                    Debug.Log("inertia toggled off");
-                    inertiatoggle = false;   
-                }
-            }
-            */
         }
         
 
@@ -163,50 +119,45 @@ public class ScrollAndPinch : MonoBehaviour
         }
         if (Input.touchCount >= 2)
         {
+
             var pos1  = PlanePosition(Input.GetTouch(0).position);
             var pos2  = PlanePosition(Input.GetTouch(1).position);
             var pos1b = PlanePosition(Input.GetTouch(0).position - Input.GetTouch(0).deltaPosition);
             var pos2b = PlanePosition(Input.GetTouch(1).position - Input.GetTouch(1).deltaPosition);
+            var centerray = PlanePosition(ScreenCenter);
             int ZorR;
+
 
             //Debug.Log("DeltaPos1 : " + Input.GetTouch(0).deltaPosition);
             //Debug.Log("DeltaPos2 : " + Input.GetTouch(1).deltaPosition);
 
             if (initdataflag == false)
             {
+                //튐현상 막기위한 조치, may be a better solution
+                recent_touch_is_two = 5;
+
                 init_zoomdist = Vector3.Distance(pos1,pos2);
-                init_rotatepivot = (pos1 + pos2) / 2;
+                init_pivot = (pos1 + pos2) / 2;
+                
                 temp_zoomdist = init_zoomdist;
                 
                 initdataflag = true;
             }
 
-            //calc zoom
-            /*var zoom = Vector3.Distance(pos1, pos2) /
-                       Vector3.Distance(pos1b, pos2b);
-            */
-            //calc zoom for orthographic
+
+            //calc zoom for orthographic camera
             var zoom = Vector3.Distance(pos1b,pos2b) / Vector3.Distance(pos1,pos2);
             //var position = (pos1 + pos2) / 2;
             float rotatetheta = Vector3.SignedAngle(pos2 - pos1, pos2b - pos1b, Plane.normal);
 
             if (zoom == 0 || zoom > 10)
                 return;
-            /*
-            if (Rotate && pos2b != pos2) {
-                Vector3 position = (pos1 + pos2) / 2;
-                Camera.transform.RotateAround(position, Plane.normal, Vector3.SignedAngle(pos2 - pos1, pos2b - pos1b, Plane.normal));
-                
-                //Instantiate(Debugobject,position,Quaternion.identity);
-                //Object.Destroy(Debugobject,0.5f);
-                //instantiate 로 생성된 Object가 상대 좌표계를 따른다..?
-            }
-            */
+
             if (zoomflag == true){
-                ZoomCamera(zoom);
+                ZoomCamera(zoom,(init_pivot-centerray));
             }
             else if (rotateflag == true){
-                RotateCamera(init_rotatepivot,rotatetheta);
+                RotateCamera(init_pivot,rotatetheta);
             }
             else {
                 ZorR = ZoomOrRotate(rotatetheta,zoom);
@@ -228,27 +179,10 @@ public class ScrollAndPinch : MonoBehaviour
                 }
             }
 
-
-
-            //edge case
-
-            //Move cam amount the mid ray
-            //Camera.transform.position = Vector3.LerpUnclamped(pos1, Camera.transform.position, 1 / zoom);
-            
-            //Debug.Log(zoom);
-            /*
-            if (zoom >= 1 + zoomthreshhold && zoom  <= 1 + zoomthreshhold)
-            {
-            }
-            */
-            //Camera.orthographicSize = Camera.orthographicSize * zoom;
-
             //zoom camera for orthographic
             //TODO:
-            //ROLLBACK:
-            // --첫번째로 손가락을 댄 부분을 기준으로 도는것이 아닌, 두 지점의 중간점을 기준으로 회전해야함--
-            //TODO:
-            //zoom 이 끝난 후, 일정시간 scroll 을 neglect 하도록 하여 zoom 시 튐현상 방지할 수 있어야함.
+            //OK//첫번째로 손가락을 댄 부분을 기준으로 도는것이 아닌, 두 지점의 중간점을 기준으로 회전해야함
+            //OK//zoom 이 끝난 후, 일정시간 scroll 을 neglect 하도록 하여 zoom 시 튐현상 방지할 수 있어야함.
             
             //Vector3 pos3 = pos1;
             //Vector3 position = (pos1 + pos2) / 2;
@@ -268,8 +202,8 @@ public class ScrollAndPinch : MonoBehaviour
         var rayBefore = Camera.ScreenPointToRay(touch.position - touch.deltaPosition);
         var rayNow = Camera.ScreenPointToRay(touch.position);
 
-        Debug.DrawRay(rayNow.origin , rayNow.direction * 100, Color.red, 5f);
-        Debug.DrawRay(rayBefore.origin, rayBefore.direction * 50, Color.green, 5f);
+        //Debug.DrawRay(rayNow.origin , rayNow.direction * 100, Color.red, 5f);
+        //Debug.DrawRay(rayBefore.origin, rayBefore.direction * 50, Color.green, 5f);
 
         if (Plane.Raycast(rayBefore, out var enterBefore) && Plane.Raycast(rayNow, out var enterNow))
             return rayBefore.GetPoint(enterBefore) - rayNow.GetPoint(enterNow);
@@ -278,15 +212,6 @@ public class ScrollAndPinch : MonoBehaviour
         return Vector3.zero;
     }
 
-    /*
-    protected Vector3 PlanePositionNow(Touch touch){
-        var rayNow = Camera.ScreenPointToRay(touch.position);
-        if (Plane.Raycast(rayNow, out var enterNow)){
-            return rayNow.GetPoint(enterNow);
-        }
-        return Vector3.zero;
-    }
-    */
     protected Vector3 PlanePosition(Vector2 screenPos)
     {
         //position
@@ -302,10 +227,6 @@ public class ScrollAndPinch : MonoBehaviour
         rotateflag = false;
         initdataflag = false;
     }
-    protected void ClearZoomOrRotate(){
-        init_theta = 0f;
-
-    }
     protected int ZoomOrRotate(float theta, float zoom){
          
         temp_zoomdist *= zoom;
@@ -315,13 +236,12 @@ public class ScrollAndPinch : MonoBehaviour
         //Debug.Log("init_zoomdist " + init_zoomdist);
         //Debug.Log("temp_zoomdist " + temp_zoomdist);
 
-        if (temp_zoomdist >= 1.15f * init_zoomdist || temp_zoomdist <= 0.85f * init_zoomdist)
+        if (temp_zoomdist >= threshhold_ZIn * init_zoomdist || temp_zoomdist <= threshhold_ZOut * init_zoomdist)
         {
             return 0;
         }
-        else if (Mathf.Abs(init_theta) >= 5.0f){
+        else if (Mathf.Abs(init_theta) >= threshhold_theta){
             return 1;    
-        
         }
         else
             return 2;
@@ -333,8 +253,12 @@ public class ScrollAndPinch : MonoBehaviour
         temp_zoomdist = 0f;
     }
 
-    protected void ZoomCamera(float zoom){
+    protected void ZoomCamera(float zoom,Vector3 deltaPos){
+        
         Camera.orthographicSize = Camera.orthographicSize * zoom;
+        //while zooming, also moves camera to "zoom" into desired space
+        Camera.transform.Translate(deltaPos*(1-zoom),Space.World);
+        //Move Camera DeltaPos*(1-zoom)
     }
 
     protected void RotateCamera(Vector3 position , float theta){

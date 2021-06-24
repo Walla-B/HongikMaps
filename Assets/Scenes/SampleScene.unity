@@ -1054,7 +1054,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 693042341}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 83.310135, y: -263.583, z: 3.7164288}
+  m_LocalPosition: {x: 38, y: -266, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 963194228}
@@ -1497,7 +1497,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.1
+  near clip plane: 0.01
   far clip plane: 1000
   field of view: 60
   orthographic: 1
@@ -2758,10 +2758,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Camera: {fileID: 963194227}
-  Rotate: 1
-  zoomthreshhold: 0
   movethershhold_factor: 0.7
-  move_sensitivity: 0
   t: 0.12
   plane_y_position: -10
   Debugobject: {fileID: 1069851754}
