@@ -36,6 +36,12 @@ public class ScrollAndPinch : MonoBehaviour
     const float threshhold_ZOut = 0.87f;
     [SerializeField]
     const float threshhold_theta = 3.5f;
+    const float MAXZOOM = 30f;
+    const float MINZOOM = 200f;
+
+    private float lastzoomfactor , lastrotatetheta = 0f;
+    private Vector3 lastzoommotion = Vector3.zero;
+    
 
     public GameObject Debugobject;
 
@@ -43,7 +49,6 @@ public class ScrollAndPinch : MonoBehaviour
     private void Awake() {
         if (Camera == null)
             Camera = Camera.main;
-
     }
 
     private void Update() {   
@@ -66,10 +71,12 @@ public class ScrollAndPinch : MonoBehaviour
 
             Delta1 = PlanePositionDelta(Input.GetTouch(0));
             if (Input.GetTouch(0).phase == TouchPhase.Began) {
-                ClearInertiaToggle();
+                ClearInertiaToggleAndParam();
             }
             if (Input.GetTouch(0).phase == TouchPhase.Moved || Input.GetTouch(0).phase == TouchPhase.Ended) {
+                
                 Camera.transform.Translate(Delta1 * movethershhold_factor, Space.World);
+
                 if (Input.GetTouch(0).phase == TouchPhase.Ended) {
                     Touchphase_endposition = Camera.transform.position;
                     Delta3 = Delta1;
@@ -88,7 +95,7 @@ public class ScrollAndPinch : MonoBehaviour
         //TODO:
         //OK//일정 시간이 지나면 멈추도록 구현
         //OK//멈추면 inertia toggle off
-        //OK//Inertiatogggle 이 켜지는 조건이 특정 treshold 를 넘도록 설정하여 과도한 리소르를 잡아먹지 않도록 최적화
+        //OK//Inertiatogggle 이 켜지는 조건이 특정 treshold 를 넘도록 설정하여 과도한 리소스를 잡아먹지 않도록 최적화
             //zoom factor 고려해야함
         //OK//inertia motion이 진행되는 중 touchinput이 들어오면 interrupt해야함.
         //Camera Max zoom & Min zoom 고려해야함
@@ -96,17 +103,29 @@ public class ScrollAndPinch : MonoBehaviour
         if (moveinertiatoggle || zoominertiatoggle || rotateinertiatoggle == true) {
             elapsedtime += Time.deltaTime;
             if (moveinertiatoggle == true) {
-                Camera.transform.position = Vector3.Lerp(Camera.transform.position , Touchphase_endposition + (Delta3 * 3f), 100 * t * Time.deltaTime);
+                Camera.transform.position = Vector3.Lerp(Camera.transform.position , Touchphase_endposition + (Delta3 * 4f) ,100 * t * Time.deltaTime);
             }
             if (zoominertiatoggle == true) {
                 //Camera.transform.position = Vector3.Lerp(Camera.transform.position , )
+                //Camera.orthographicSize = Camera.orthographicSize * lastzoomfactor;
+                if (Mathf.Abs(lastzoomfactor - 1f) <= 0.005f) {
+                    zoominertiatoggle = false;
+                }
+
+                lastzoomfactor = Mathf.Lerp(lastzoomfactor , 1,10 * Time.deltaTime);
+                lastzoommotion = Vector3.Lerp(lastzoommotion, Vector3.zero, 10 * Time.deltaTime);
+                ZoomCamera(lastzoomfactor, lastzoommotion);
+                //Mathf.Lerp(lastzoomfactor,1,100 * Time.deltaTime);
+                //ZoomCamera(Mathf.Lerp(lastzoomfactor,1,100 * Time.deltaTime), Vector3.Lerp(lastzoommotion,Vector3.zero,100*Time.deltaTime));
+                Debug.Log("Zoom_interp Working");
             }
             if (rotateinertiatoggle == true) {
-
+                lastrotatetheta = Mathf.Lerp(lastrotatetheta, 0f, 10*Time.deltaTime);
+                RotateCamera(init_pivot,lastrotatetheta);
             }
 
-            if(elapsedtime >= 1f) {
-                ClearInertiaToggle();
+            if(elapsedtime >= 2f) {
+                ClearInertiaToggleAndParam();
             }
         }
 
@@ -134,7 +153,7 @@ public class ScrollAndPinch : MonoBehaviour
                 //튐현상 막기위한 조치, may be a better solution
                 recent_touch_is_two = 5;
 
-                ClearInertiaToggle();
+                ClearInertiaToggleAndParam();
 
                 init_zoomdist = Vector3.Distance(pos1,pos2);
                 init_pivot = (pos1 + pos2) / 2;
@@ -186,11 +205,16 @@ public class ScrollAndPinch : MonoBehaviour
                 
                 //초기화 하기 전, 기존 motion에 따라 어떤 inertia motion을 가질것인지 결정함
                 if (zoomflag == true) {
+                    lastzoomfactor = zoom;
+                    lastzoommotion = (init_pivot-centerray);
+
                     zoominertiatoggle = true;
                     Debug.Log("Zoominertia set to true");
                     elapsedtime = 0f;
                 }
                 if (rotateflag == true) {
+                    lastrotatetheta = rotatetheta;
+
                     rotateinertiatoggle = true;
                     Debug.Log("Rotateinertia set to true");
                     elapsedtime = 0f;
@@ -252,19 +276,23 @@ public class ScrollAndPinch : MonoBehaviour
         temp_zoomdist = 0f;
     }
 
-    protected void ClearInertiaToggle(){
+    protected void ClearInertiaToggleAndParam(){
         moveinertiatoggle = false;
         zoominertiatoggle = false;
         rotateinertiatoggle = false;
+
+        lastzoomfactor = 0f;
+        lastrotatetheta = 0f;
+        lastzoommotion = Vector3.zero;
     }
 
     protected void ZoomCamera(float zoom,Vector3 deltaPos) {
         
         //zoom limit, 더 나은 방법 존재 가능
-        if (Camera.orthographicSize * zoom <= 30f) {
+        if (Camera.orthographicSize * zoom <= MAXZOOM) {
             return;
         }
-        else if (Camera.orthographicSize * zoom >= 200f) {
+        else if (Camera.orthographicSize * zoom >= MINZOOM) {
             return;
         }
         
