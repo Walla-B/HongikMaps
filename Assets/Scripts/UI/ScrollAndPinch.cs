@@ -43,7 +43,7 @@ public class ScrollAndPinch : MonoBehaviour
     private Vector3 lastzoommotion = Vector3.zero;
     
 
-    public GameObject Debugobject;
+    //public GameObject Debugobject;
 
     //if camera is null, put maincamera in Camera
     private void Awake() {
@@ -286,6 +286,14 @@ public class ScrollAndPinch : MonoBehaviour
         lastzoommotion = Vector3.zero;
     }
 
+    protected void MoveCamera() {
+        //TODO:
+        //Set Move Boundary
+        //Set Threshold to define it as "moving"
+
+
+
+    }
     protected void ZoomCamera(float zoom,Vector3 deltaPos) {
         
         //zoom limit, 더 나은 방법 존재 가능
@@ -306,7 +314,9 @@ public class ScrollAndPinch : MonoBehaviour
         Camera.transform.RotateAround(position, Plane.normal, theta / 2);
     }
 
+    /*
     private void OnDrawGizmos() {
         Gizmos.DrawLine(transform.position, transform.position + transform.up);
     }
+    */
 }
