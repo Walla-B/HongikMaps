@@ -6,7 +6,7 @@ using System.IO;
 public class InitGraph : MonoBehaviour
 {
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         Graph graph = new Graph();
 
@@ -57,12 +57,12 @@ public class InitGraph : MonoBehaviour
                     break;
                 }
 
-                Debug.Log(targetNodeIndex);
+                //Debug.Log(targetNodeIndex);
                 currentNode.AddAdjNode(graph.GetNodeInGraph(targetNodeIndex));
             }
         }
 
-
+        DebugGraph.DrawGraph(graph);
 
     }
 

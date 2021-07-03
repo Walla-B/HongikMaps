@@ -30,7 +30,7 @@ public class Graph {
 public class Node {
     public int NodeID {get; private set;}
     public Vector3 Coordinate {get; private set;}
-    public LinkedList<Node> AdjNodes {get; private set;}
+    public List<Node> AdjNodes {get; private set;}
 
     /*
     public float Xcoord {get; private set;}
@@ -40,13 +40,13 @@ public class Node {
     public Node(){
     }
     public Node(int id, Vector3 position /* + Additional information */) {
-        AdjNodes = new LinkedList<Node>();
-        this.NodeID = id;
+        AdjNodes = new List<Node>();
+        this.NodeID = id; 
         this.Coordinate = position;
     }
     //method to add edges
     public void AddAdjNode(Node node) {
-        AdjNodes.AddLast(node);
+        AdjNodes.Add(node);
     }
 }
 
