@@ -26,10 +26,6 @@ public class InitGraph : MonoBehaviour
             
             string[] data_lines = line.Split(',');
             
-            for (int i = 0; i < 4 ; i++) {
-                Debug.Log(data_lines[i]);
-            }
-
             int nodeID = int.Parse(data_lines[0]);
             Vector3 nodeTransform = new Vector3(float.Parse(data_lines[1]),float.Parse(data_lines[2]),float.Parse(data_lines[3]));
             Node tempnode = new Node(nodeID,nodeTransform);
@@ -37,7 +33,6 @@ public class InitGraph : MonoBehaviour
 
             graph.AddNodeToGraph(tempnode);
 
-            Debug.Log("this part is executed");
 
         }
         //Initializing relationship between nodes with Edge.csv
@@ -61,6 +56,8 @@ public class InitGraph : MonoBehaviour
                 if (targetNodeIndex == -1) {
                     break;
                 }
+
+                Debug.Log(targetNodeIndex);
                 currentNode.AddAdjNode(graph.GetNodeInGraph(targetNodeIndex));
             }
         }

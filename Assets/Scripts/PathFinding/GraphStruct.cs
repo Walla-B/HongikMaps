@@ -9,8 +9,11 @@ public class Graph {
     //public Dictionary<Node, List<Node>> TotalGraph {get; private set;}
     public List<Node> TotalGraph {get; private set;}
 
+    public Graph() {
+        TotalGraph = new List<Node>();
+    }
     public void AddNodeToGraph(Node node) {
-        TotalGraph.Add(node);
+        this.TotalGraph.Add(node);
     }
     public Node GetNodeInGraph(int index) {
         return TotalGraph[index];
@@ -34,8 +37,10 @@ public class Node {
     public float Ycoord {get; private set;}
     public float Zcoord {get; private set;}
     */
-    public Node(){ }
+    public Node(){
+    }
     public Node(int id, Vector3 position /* + Additional information */) {
+        AdjNodes = new LinkedList<Node>();
         this.NodeID = id;
         this.Coordinate = position;
     }
