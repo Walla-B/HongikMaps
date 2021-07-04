@@ -13,7 +13,13 @@ public static class DebugGraph
 
             for (int j = 0; j < curnode.AdjNodes.Count; j++) {
                 Node targetNode = targetnodelist[j];
-                Debug.DrawLine(curnode.Coordinate,targetNode.Coordinate,Color.red,100f);
+
+                if (Vector3.Distance(curnode.Coordinate,targetNode.Coordinate) > 10f)
+                {
+                    Debug.DrawLine(curnode.Coordinate,targetNode.Coordinate,Color.red,100f);
+                }
+                else
+                    Debug.DrawLine(curnode.Coordinate,targetNode.Coordinate,Color.blue,100f);
 
             }
 
