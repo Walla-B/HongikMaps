@@ -6,7 +6,7 @@ using System.IO;
 public class CsvWrite : MonoBehaviour
 {
     // Start is called before the first frame update
-    const int numberofnode = 52;
+    const int numberofnode = 105;
     const string nameofobj = "Node";
     void Start()
     {
@@ -38,7 +38,7 @@ public class CsvWrite : MonoBehaviour
     int[] twonodes = new int[2];
     GameObject[] twonodeobjects = new GameObject[2];
 
-    public Camera mainCamera;
+    public Camera DebugCamera;
     private Ray myRay;
     private RaycastHit hitray;
 
@@ -47,15 +47,20 @@ public class CsvWrite : MonoBehaviour
     // check true to export current nodes
     [SerializeField]
     private bool export = false;
+    
+    private Vector3 midpoint = new Vector3(Screen.width/2,Screen.height/2,0f);
 
     
     void Update(){
 
         //psudocode
-        myRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+        myRay = DebugCamera.ScreenPointToRay(midpoint);
         
 
-        if (Input.GetMouseButtonDown(0) && Physics.Raycast(myRay,out hitray)) {
+        if (Input.GetKeyDown (KeyCode.Space) && Physics.Raycast(myRay,out hitray)) {
+
+            //Debug.DrawRay(myRay.origin,myRay.direction,Color.green,3f);
+
             if (hitray.collider != null) {
                 if (nodecounter < 2) {
                     string tempname = hitray.collider.gameObject.name;
