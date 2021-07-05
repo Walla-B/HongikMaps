@@ -62,7 +62,23 @@ public class InitGraph : MonoBehaviour
             }
         }
 
+
+        int sttnodeindex = 0, tgtnodeindex = 89;
+        
         DebugGraph.DrawGraph(graph);
+        Dijkstra pathfinding = new Dijkstra();
+        List<Node> path = pathfinding.Dijkstrasolve(graph,sttnodeindex,tgtnodeindex);
+
+        for (int i = 0; i < path.Count; i++)
+        {
+            if (i < path.Count - 1)
+                Debug.DrawLine(path[i].Coordinate,path[i+1].Coordinate,Color.green,100f);
+            else if (i == path.Count - 1 ) {
+                break;
+            }
+                
+ 
+        }
 
     }
 

@@ -82,7 +82,7 @@ public class CsvWrite : MonoBehaviour
                 }
                 if (nodecounter >= 2) {
                     nodecounter = 0;
-                    Debug.DrawLine(twonodeobjects[0].transform.position,twonodeobjects[1].transform.position,Color.red,100f);
+                    Debug.DrawLine(twonodeobjects[0].transform.position,twonodeobjects[1].transform.position,Color.red,10000f);
                     //edgelist.Add(twonodes);
                     dataarray[twonodes[0]][indexarray[twonodes[0]]] = twonodes[1];
                     indexarray[twonodes[0]] += 1;

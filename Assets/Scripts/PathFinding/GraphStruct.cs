@@ -8,7 +8,6 @@ public class Graph {
     
     //public Dictionary<Node, List<Node>> TotalGraph {get; private set;}
     public List<Node> TotalGraph {get; private set;}
-
     public Graph() {
         TotalGraph = new List<Node>();
     }
@@ -20,10 +19,19 @@ public class Graph {
     }
 
     //////
-    //      |Node|   ->     |Node|   ->    |Node|   ->    |Node| 
-    //        |               |              |              |
-    // index [0]             [1]            [2]            [3]
     //
+    // index [0]             [1]            [2]            [3]
+    //        |               |              |              |
+    //      |Node|   ->     |Node|   ->    |Node|   ->    |Node| 
+    //
+    //////
+
+    //////
+    //      |Node|
+    //        |
+    //    List<Node>
+    //        +
+    //       data
     //////
 }
 
@@ -31,14 +39,20 @@ public class Node {
     public int NodeID {get; private set;}
     public Vector3 Coordinate {get; private set;}
     public List<Node> AdjNodes {get; private set;}
+    
+    //pathfinding components
+    public float Weight {get; private set;}
+
+    public Node ParentNode {get; private set;}
+
+    public bool IsWalkAble {get; private set;}
 
     /*
     public float Xcoord {get; private set;}
     public float Ycoord {get; private set;}
     public float Zcoord {get; private set;}
     */
-    public Node(){
-    }
+    public Node() {     }
     public Node(int id, Vector3 position /* + Additional information */) {
         AdjNodes = new List<Node>();
         this.NodeID = id; 
@@ -48,5 +62,32 @@ public class Node {
     public void AddAdjNode(Node node) {
         AdjNodes.Add(node);
     }
+    public void SetWeight(float weight) {
+        this.Weight = weight;
+    }
+    public void SetParenNode(Node node) {
+        this.ParentNode = node;
+    }
+    public void SetIsWalkable(bool walkable) {
+        this.IsWalkAble = walkable;
+    }
 }
 
+
+    /*    
+    public class Node : MonoBehaviour
+    {
+        [SerializeField]
+        private ushort Node_ID;
+        [SerializeField]
+        //private float X_Coord, Y_Coord, Z_Coord;
+        private float weight;
+        [SerializeField]
+        private string Node_Name;
+        [SerializeField]
+        private byte Node_Attribute, Node_Building;
+        [SerializeField]
+        private sbyte Node_floor;
+        private List<Node> neighbourNode;
+
+    */
