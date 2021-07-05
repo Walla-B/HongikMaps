@@ -91,15 +91,7 @@ public class Dijkstra
                     
                 }
             }
-            /*
-            for (int i = 0; i < currentNode.AdjNodes.Count; i++) {
-                Node node = currentNode.AdjNodes[i];
-                if (unexplored.Contains())
-                {
-                    
-                }
-            }
-            */
+
         }
         return targetNode;
     }

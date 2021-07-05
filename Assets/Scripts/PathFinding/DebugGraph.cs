@@ -16,10 +16,10 @@ public static class DebugGraph
 
                 if (Vector3.Distance(curnode.Coordinate,targetNode.Coordinate) > 10f)
                 {
-                    Debug.DrawLine(curnode.Coordinate,targetNode.Coordinate,Color.red,100f);
+                    Debug.DrawLine(curnode.Coordinate,targetNode.Coordinate,Color.red,10000f);
                 }
                 else
-                    Debug.DrawLine(curnode.Coordinate,targetNode.Coordinate,Color.blue,100f);
+                    Debug.DrawLine(curnode.Coordinate,targetNode.Coordinate,Color.blue,10000f);
 
             }
 
