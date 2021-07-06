@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using System;
 
 public class CsvWrite : MonoBehaviour
 {
@@ -16,9 +17,9 @@ public class CsvWrite : MonoBehaviour
     // 3. [OPTIONAL] size of csv's row is hard-coded into this script. 6 in this case.
     //      if number of Node's adjacent node exceeds 6, you can change it.
 
-    const int numberofnode = 108;
+    const int numberofnode = 105;
     const string nameofobj = "Node";
-
+    //Actually, this is just the row size of dataarray. max numbers of nodes can connect is maxconnectednods -1
     const int maxconnectednodes = 6;
     void Start()
     {
@@ -97,6 +98,8 @@ public class CsvWrite : MonoBehaviour
     int[][] dataarray = new int[numberofnode][];
     int[] indexarray = new int[numberofnode];
     //private List<int[]> edgelist = new List<int[]>();
+
+    // nodecounter and twonodes used for different purposes twice. for Adding Edge and  Removing edge;
     private int nodecounter = 0;
     int[] twonodes = new int[2];
     GameObject[] twonodeobjects = new GameObject[2];
@@ -116,6 +119,8 @@ public class CsvWrite : MonoBehaviour
     // check true to read data from edge.csv and use that data
     [SerializeField]
     private bool overwriteEdge = true;
+    [SerializeField] 
+    private bool removeedge = false;
     
 
     //After Initializing the positions of Nodes, Playmode is used to add edges to graph
@@ -134,8 +139,92 @@ public class CsvWrite : MonoBehaviour
         //psudocode
         myRay = DebugCamera.ScreenPointToRay(midpoint);
         
+        //remove edges from exsiting grpah
+        
+        //psudocode
+        /*
+            if (removeedge == true && input.getkey(r) && physics.raycast && input.getkey(r)) {    
+                // maybe adding function when only works int nodecounter == 0 situation might be helpful
+                if (nodecounter < 2) {
+                    //no need to be colored, because it might confuse between already-node existing nodes.
+                    parse the hitray object's name and put it in twonodes[]
+                    Debug.Log(nodecounter);
+                    nodecounter ++;
+                }
+                if (nodecounter == 2) {
+                    nodecounter = 0;
 
-        if (Input.GetKeyDown (KeyCode.Space) && Physics.Raycast(myRay,out hitray)) {
+                    twonodes[0] , twonodes[1];
+
+                    findindex = Array.IndexOf(dataarray[twonodes[0]],twonodes[1])
+                    dataarray[twonodes[0]][findindex] = -1;
+
+                    Array.Sort(dataarray[twonodes[0]],1,maxconnectednodes -1);
+
+                    Array.reverse(dataarray[twonodes[0]],1 maxconndectednodes -1)
+
+                    findindcx = Array.indexof(dataarray[twonodes[1]],twonodes[0])
+                    dataarray[twonodes[0]][findindex] = -1;
+
+                    Array.sort
+                    Array.reverse
+
+                    removeedge == false;
+
+                }
+            }
+            
+
+        */
+
+        if (removeedge == true && Input.GetKeyDown(KeyCode.R) && Physics.Raycast(myRay, out hitray)) {
+            if (nodecounter < 2) {
+
+                    string tempname = hitray.collider.gameObject.name;
+                    string search1 = "(";
+                    string search2 = ")";
+
+                    int index1 = tempname.IndexOf(search1);
+                    int index2 = tempname.IndexOf(search2);
+
+
+                    twonodes[nodecounter] = int.Parse(tempname.Substring(index1 + 1,index2 - index1 - 1) );
+                    twonodeobjects[nodecounter] = hitray.collider.gameObject;
+
+                    //Debug.Log(twonodes[nodecounter]);
+                    Debug.Log(nodecounter);
+                    nodecounter++;
+            }
+            if (nodecounter == 2) {
+                nodecounter = 0;
+                Debug.DrawLine(twonodeobjects[0].transform.position, twonodeobjects[1].transform.position,Color.black,10000f);
+
+                int findindcx = Array.IndexOf(dataarray[twonodes[0]],twonodes[1]);
+
+                Debug.Log("findindex : " +findindcx);                
+
+
+                dataarray[twonodes[0]][findindcx] = -1;
+
+                Array.Sort(dataarray[twonodes[0]],1,maxconnectednodes - 1);
+                Array.Reverse(dataarray[twonodes[0]],1,maxconnectednodes -1);
+
+                findindcx = Array.IndexOf(dataarray[twonodes[1]],twonodes[0]);
+
+                Debug.Log("findindex 2 : " + findindcx);
+                dataarray[twonodes[1]][findindcx] = -1;
+
+                Array.Sort(dataarray[twonodes[1]],1,maxconnectednodes -1);
+                Array.Reverse(dataarray[twonodes[1]],1,maxconnectednodes -1 );
+
+
+                removeedge = false;
+            }
+        }
+
+        
+        //add graph to exsitigin graph
+        if (Input.GetKeyDown (KeyCode.Space) && Physics.Raycast(myRay,out hitray) && removeedge == false) {
 
             //Debug.DrawRay(myRay.origin,myRay.direction,Color.green,3f);
 
