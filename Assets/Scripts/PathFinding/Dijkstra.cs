@@ -51,7 +51,10 @@ public class Dijkstra
 
     }
 
-
+    //FIXME:
+    //it works fine, but time complexity of this algorithm is so slow.
+    //Current time complexity is O(n^2)
+    //using priority queue(Fibonacci heap), it can be reduced by O(n + elogn)
     private static Node DijkstraAlgo (Graph graph, Node startingNode, Node targetNode) {
         
 

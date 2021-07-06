@@ -63,7 +63,7 @@ public class InitGraph : MonoBehaviour
         }
 
 
-        int sttnodeindex = 0, tgtnodeindex = 29;
+        int sttnodeindex = 0, tgtnodeindex = 135;
         
         DebugGraph.DrawGraph(graph);
         Dijkstra pathfinding = new Dijkstra();

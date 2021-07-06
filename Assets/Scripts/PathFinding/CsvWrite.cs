@@ -17,10 +17,17 @@ public class CsvWrite : MonoBehaviour
     // 3. [OPTIONAL] size of csv's row is hard-coded into this script. 6 in this case.
     //      if number of Node's adjacent node exceeds 6, you can change it.
 
-    const int numberofnode = 105;
+    const int numberofnode = 136;
     const string nameofobj = "Node";
+
+    //Set this varibale to true before playmode if you want to export node's transform data to Node.csv
+    [SerializeField]
+    private bool exportnodedata = false;
+
+
     //Actually, this is just the row size of dataarray. max numbers of nodes can connect is maxconnectednods -1
-    const int maxconnectednodes = 6;
+    //setting maxconnectednodes manually is so annoying. Need to be fixed if possible
+    const int maxconnectednodes = 8;
     void Start()
     {
 
@@ -32,13 +39,15 @@ public class CsvWrite : MonoBehaviour
             //Debug.Log("positon of " + i + " : " + "x = " + temp.transform.position.x + "  y = " + temp.transform.position.y + "  z = " + temp.transform.position.z);
             data_lines = (i.ToString() + "," + temp.transform.position.x.ToString() + "," + temp.transform.position.y.ToString() + "," + temp.transform.position.z.ToString());
             //Debug.Log(data_lines);
-            sw.WriteLine(data_lines);
+            if (exportnodedata == true) {
+                sw.WriteLine(data_lines);
+            }
         }
         sw.Close();
         
         //initialize array
         for (int i = 0; i < numberofnode; i++) {
-            dataarray[i] = new int[maxconnectednodes] {i , -1, -1, -1, -1, -1};
+            dataarray[i] = new int[maxconnectednodes] {i , -1, -1, -1, -1, -1, -1, -1};
             indexarray[i] = 1;
             //Debug.Log(dataarray[i][0] + "  " + dataarray[i][1] + dataarray[i][2]);
         }
@@ -155,13 +164,19 @@ public class CsvWrite : MonoBehaviour
                     nodecounter = 0;
 
                     twonodes[0] , twonodes[1];
-
+                    
+                    //find the index in dataarray[twonodes[0]] containing second node
                     findindex = Array.IndexOf(dataarray[twonodes[0]],twonodes[1])
+                    //set the data to -1 (no connection)
                     dataarray[twonodes[0]][findindex] = -1;
 
+                    //sort the data part of the array in ascending order
                     Array.Sort(dataarray[twonodes[0]],1,maxconnectednodes -1);
-
+                    
+                    //reverse it to descending order so that no connection (-1) is in the rightmost part of the array
                     Array.reverse(dataarray[twonodes[0]],1 maxconndectednodes -1)
+
+                    //do the same thing with other node
 
                     findindcx = Array.indexof(dataarray[twonodes[1]],twonodes[0])
                     dataarray[twonodes[0]][findindex] = -1;
@@ -169,6 +184,8 @@ public class CsvWrite : MonoBehaviour
                     Array.sort
                     Array.reverse
 
+
+                    //now removeedge can be set to false;
                     removeedge == false;
 
                 }
@@ -252,6 +269,7 @@ public class CsvWrite : MonoBehaviour
                     Debug.DrawLine(twonodeobjects[0].transform.position,twonodeobjects[1].transform.position,Color.red,10000f);
                     //edgelist.Add(twonodes);
                     dataarray[twonodes[0]][indexarray[twonodes[0]]] = twonodes[1];
+
                     indexarray[twonodes[0]] += 1;
 
                     dataarray[twonodes[1]][indexarray[twonodes[1]]] = twonodes[0];
@@ -268,9 +286,18 @@ public class CsvWrite : MonoBehaviour
             export = false;
 
             StreamWriter sw1 = new StreamWriter(@"C:\Users\dev\Desktop\HongikMaps_git\Assets\Scripts\PathFinding\EdgeTemp.csv",true);
-            string data_lines;
+            string data_lines = null;
 
             for (int i = 0; i < numberofnode; i++) {
+
+                for (int j = 0; j < maxconnectednodes; j++)
+                {
+                    if (j == 0) {
+                        data_lines += dataarray[i][j].ToString();
+                    }
+                    else
+                        data_lines += ("," + dataarray[i][j].ToString());
+                }
                 data_lines = (dataarray[i][0].ToString() + "," + dataarray[i][1].ToString() + "," + dataarray[i][2].ToString() + "," + dataarray[i][3].ToString() + "," + dataarray[i][4].ToString()+ "," +dataarray[i][5].ToString());
                 sw1.WriteLine(data_lines);
             }

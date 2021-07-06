@@ -19,7 +19,7 @@ public static class DebugGraph
                     Debug.DrawLine(curnode.Coordinate,targetNode.Coordinate,Color.red,10000f);
                 }
                 else
-                    Debug.DrawLine(curnode.Coordinate,targetNode.Coordinate,Color.blue,10000f);
+                    Debug.DrawLine(curnode.Coordinate,targetNode.Coordinate,Color.red,10000f);
 
             }
 
