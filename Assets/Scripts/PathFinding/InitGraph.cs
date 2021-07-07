@@ -67,8 +67,13 @@ public class InitGraph : MonoBehaviour
         
         DebugGraph.DrawGraph(graph);
         Dijkstra pathfinding = new Dijkstra();
-        List<Node> path = pathfinding.Dijkstrasolve(graph,sttnodeindex,tgtnodeindex);
 
+        List<Node> path = pathfinding.Dijkstrasolve(graph,sttnodeindex,tgtnodeindex);
+        
+        VisualizePathResult.VisulaizePath(path,nodeobject);
+
+
+        //Draw pathfinding result in scene view node with green line
         for (int i = 0; i < path.Count; i++)
         {
             if (i < path.Count - 1)
@@ -81,5 +86,8 @@ public class InitGraph : MonoBehaviour
         }
 
     }
+
+    [SerializeField]
+    private GameObject nodeobject;
 
 }

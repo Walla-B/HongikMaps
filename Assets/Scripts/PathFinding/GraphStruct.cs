@@ -42,9 +42,7 @@ public class Node {
     
     //pathfinding components
     public float Weight {get; private set;}
-
     public Node ParentNode {get; private set;}
-
     public bool IsWalkAble {get; private set;}
 
     /*
