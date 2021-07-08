@@ -9,15 +9,20 @@ public class InitGraph : MonoBehaviour
     void Awake()
     {
         Graph graph = new Graph();
-
-        StreamReader stream = CsvReader.Csvread("Node.csv");
-
+        ///////////////////////////////
+        ///////////////////////////////
+        ///////////////////////////////
+        var stream = CsvReader.Csvread("Node");
+        ///////////////////////////////
+        ///////////////////////////////
+        ///////////////////////////////
         string line;
         bool endOfFile = false;
 
         //Initializing NodeID and Node's posiiton data
         while (!endOfFile) {
             line = stream.ReadLine();
+            //Debug.Log(line);
 
             if(line == null) {
                 endOfFile = true;
@@ -25,8 +30,9 @@ public class InitGraph : MonoBehaviour
             }
             
             string[] data_lines = line.Split(',');
-            
+            //Debug.Log(data_lines[0]); 
             int nodeID = int.Parse(data_lines[0]);
+            
             Vector3 nodeTransform = new Vector3(float.Parse(data_lines[1]),float.Parse(data_lines[2]),float.Parse(data_lines[3]));
             Node tempnode = new Node(nodeID,nodeTransform);
 
@@ -37,7 +43,7 @@ public class InitGraph : MonoBehaviour
         }
         //Initializing relationship between nodes with Edge.csv
         endOfFile = false;
-        stream = CsvReader.Csvread("Edge.csv");
+        stream = CsvReader.Csvread("Edge");
 
         while (!endOfFile) {
             line = stream.ReadLine();
@@ -63,7 +69,7 @@ public class InitGraph : MonoBehaviour
         }
 
 
-        int sttnodeindex = 0, tgtnodeindex = 42;
+        int sttnodeindex = 0, tgtnodeindex = 30;
         
         DebugGraph.DrawGraph(graph);
         Dijkstra pathfinding = new Dijkstra();

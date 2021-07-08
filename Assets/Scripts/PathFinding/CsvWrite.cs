@@ -71,8 +71,16 @@ public class CsvWrite : MonoBehaviour
         //Parse Edge.csv and copy its components to dataarray[][]
         if (overwriteEdge == true) {
             bool endoffile = false;
-            StreamReader sr = CsvReader.Csvread("Edge.csv");
 
+
+
+            //////////////////////
+            //////////////////////
+            //////////////////////
+            var sr = CsvReader.Csvread("Edge");
+            //////////////////////
+            //////////////////////
+            //////////////////////
             while (!endoffile) {
                 string line=sr.ReadLine();
                 if (line == null) {

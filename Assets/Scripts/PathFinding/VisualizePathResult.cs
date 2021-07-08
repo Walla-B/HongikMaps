@@ -22,7 +22,7 @@ public static class VisualizePathResult
                 //quaternion = Quaternion.identity;
                 anglebetweennode = node[i].Coordinate - node[i+1].Coordinate;
                 lengthbetweennode = Vector3.Distance(node[i].Coordinate,node[i+1].Coordinate);
-                lengthtoscale = new Vector3(1f,0.1f,lengthbetweennode);
+                lengthtoscale = new Vector3(1f,0.2f,lengthbetweennode);
                 //quaternion.eulerAngles = new Vector3(anglebetweennode.x,0f,anglebetweennode.z);
                 //quaternion.eulerAngles = Vector3.up
                 

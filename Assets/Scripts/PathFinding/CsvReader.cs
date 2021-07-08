@@ -1,21 +1,28 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
 public class CsvReader : MonoBehaviour
 {
-    public static StreamReader Csvread(string filename){
+    public static StringReader Csvread(string filename){
 
-        StreamReader sr;
+        StringReader sr;
         
         //runningin mobile platform
+        /*
         if (Application.isMobilePlatform) {
-            sr = new StreamReader(Application.persistentDataPath + "\\Scripts\\PathFinding\\" + filename);
+            sr = new StringReader(Application.persistentDataPath + "\\Scripts\\PathFinding\\" + filename);
+            
             return sr;
         }
-        
-        sr = new StreamReader(Application.dataPath + "\\Scripts\\PathFinding\\" + filename);
+        */
+
+        //Using Resources.Load is not memory efficient. later needs to be 
+        TextAsset sourcefile = Resources.Load<TextAsset>(filename);
+
+        sr = new StringReader(sourcefile.text);
+        //sr = new StringReader(Application.dataPath + "\\Scripts\\PathFinding\\" + filename);
         return sr;
     }
 }
