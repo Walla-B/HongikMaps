@@ -63,22 +63,25 @@ public class InitGraph : MonoBehaviour
         }
 
 
-        int sttnodeindex = 0, tgtnodeindex = 135;
+        int sttnodeindex = 0, tgtnodeindex = 42;
         
         DebugGraph.DrawGraph(graph);
         Dijkstra pathfinding = new Dijkstra();
 
         List<Node> path = pathfinding.Dijkstrasolve(graph,sttnodeindex,tgtnodeindex);
         
-        VisualizePathResult.VisulaizePath(path,nodeobject);
+        VisualizePathResult.VisulaizePath(path,nodeobject,edgeobject);
+
 
 
         //Draw pathfinding result in scene view node with green line
         for (int i = 0; i < path.Count; i++)
         {
+            
             if (i < path.Count - 1)
                 Debug.DrawLine(path[i].Coordinate,path[i+1].Coordinate,Color.green,100f);
             else if (i == path.Count - 1 ) {
+                Debug.Log("Total cost : " + path[i].Weight);
                 break;
             }
                 
@@ -89,5 +92,7 @@ public class InitGraph : MonoBehaviour
 
     [SerializeField]
     private GameObject nodeobject;
+    [SerializeField]
+    private GameObject edgeobject;
 
 }
