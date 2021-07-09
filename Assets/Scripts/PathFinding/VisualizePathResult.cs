@@ -8,7 +8,6 @@ public class VisualizePathResult
     //calculating each vertex at certain nodes and making a mesh to render
     //a component might be hard, but i will look good with a Unlit/Color shader.
 
-    private List<GameObject> pathcomponent = new List<GameObject>();
     public void VisulaizePath (List<Node> node , GameObject nodeobject, GameObject edgeobject) {
         //Quaternion quaternion = new Quaternion();
 
@@ -20,7 +19,7 @@ public class VisualizePathResult
         //drawing nodes 
         for (int i = 0 ; i < node.Count; i++ ) {
             GameObject nodecompobject = GameObject.Instantiate(nodeobject,node[i].Coordinate,Quaternion.identity);
-            pathcomponent.Add(nodecompobject);
+            nodecompobject.tag = "Instantiatepath";
 
             if (i < node.Count - 1) {
                 //draw line between node[i].Coordinate, node[i+1].Coordinate
@@ -35,7 +34,7 @@ public class VisualizePathResult
                 
                 GameObject edgecompobject = GameObject.Instantiate(edgeobject,(node[i].Coordinate + node[i+1].Coordinate)/2,Quaternion.LookRotation(anglebetweennode,Vector3.up)); //.transform.localScale = lengthtoscale;
                 edgecompobject.transform.localScale = lengthtoscale;
-                pathcomponent.Add(nodecompobject);
+                edgecompobject.tag = "Instantiatepath";
             }
             else if (i == node.Count -1) {
                 break;
@@ -45,12 +44,14 @@ public class VisualizePathResult
         //drawing edges
 
     }
+
+    //FIXME:
+    //Need to porperly destroy initailized objects
     public void OncallDestroyPrevious(){
-        Debug.Log("count : " + pathcomponent.Count);
-        for (int i = 0; i < pathcomponent.Count; i++) {
-            GameObject.Destroy(pathcomponent[i]);
-            Debug.Log("destroyed" + i);
-        }
+        var previousObjects = GameObject.FindGameObjectsWithTag("Instantiatepath");
+            for (int i = 0; i < previousObjects.Length ; i++) {
+                GameObject.Destroy(previousObjects[i]);
+            }
     }
 
 }
