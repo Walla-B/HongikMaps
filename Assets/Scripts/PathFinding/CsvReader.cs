@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-public class CsvReader : MonoBehaviour
+public class CsvReader
 {
     public static StringReader Csvread(string filename){
 
@@ -22,7 +22,7 @@ public class CsvReader : MonoBehaviour
         TextAsset sourcefile = Resources.Load<TextAsset>(filename);
 
         sr = new StringReader(sourcefile.text);
-        //sr = new StringReader(Application.dataPath + "\\Scripts\\PathFinding\\" + filename);
         return sr;
+        //sr = new StringReader(Application.dataPath + "\\Scripts\\PathFinding\\" + filename);
     }
 }

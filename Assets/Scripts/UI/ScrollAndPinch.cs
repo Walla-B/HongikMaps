@@ -314,9 +314,5 @@ public class ScrollAndPinch : MonoBehaviour
         Camera.transform.RotateAround(position, Plane.normal, theta / 2);
     }
 
-    /*
-    private void OnDrawGizmos() {
-        Gizmos.DrawLine(transform.position, transform.position + transform.up);
-    }
-    */
+
 }

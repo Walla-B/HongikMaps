@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-public class InitGraph : MonoBehaviour
+public class InitGraph
 {
-    // Start is called before the first frame update
     private Graph graphcomp;
-    void Awake()
+    public static Graph InitiateGraphFromData()
     {
         Graph graph = new Graph();
         ///////////////////////////////
@@ -69,38 +68,10 @@ public class InitGraph : MonoBehaviour
             }
         }
 
-
-        
-        DebugGraph.DrawGraph(graph);
-
-
-        ////this part of code should be not in Awake()
-        /*
-        Dijkstra pathfinding = new Dijkstra();
-
-        List<Node> path = pathfinding.Dijkstrasolve(graph,sttnodeindex,tgtnodeindex);
-        VisualizePathResult.VisulaizePath(path,nodeobject,edgeobject);
-        
-
-
-        //Draw pathfinding result in scene view node with green line
-        for (int i = 0; i < path.Count; i++)
-        {
-            
-            if (i < path.Count - 1)
-                Debug.DrawLine(path[i].Coordinate,path[i+1].Coordinate,Color.green,100f);
-            else if (i == path.Count - 1 ) {
-                Debug.Log("Total cost : " + path[i].Weight);
-                break;
-            }
-                
- 
-        }
-        */
-
-        graphcomp = graph;
+        return graph;
 
     }
+    /*
     void Update(){
         if (calculate == true && Input.GetMouseButtonDown(0)) {
             if (nodeselectindex < 2) {
@@ -128,15 +99,18 @@ public class InitGraph : MonoBehaviour
             }
             else if (nodeselectindex == 2) {
                 nodeselectindex = 0;
-                Dijkstra pathfind = new Dijkstra();
-                visualize.VisulaizePath(pathfind.Dijkstrasolve(graphcomp,sttnodeindex,tgtnodeindex), nodeobject,edgeobject);
+                //Dijkstra pathfind = new Dijkstra();
+                VisualizePathResult.VisulaizePath(Dijkstra.Dijkstrasolve(graphcomp,sttnodeindex,tgtnodeindex), nodeobject,edgeobject);
 
                 calculate = false;
             }
             //Debug.Log("called");
         }
     }
-    VisualizePathResult visualize = new VisualizePathResult();
+    */
+    //VisualizePathResult visualize = new VisualizePathResult();
+    
+    
 
     private Ray myray;
     private RaycastHit hitray;

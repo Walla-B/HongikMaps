@@ -4,16 +4,12 @@ using UnityEngine;
 
 public class fullscreen : MonoBehaviour
 {
-    // Start is called before the first frame update
     void Start()
     {   
+        //If running platform is Android, set to non-fullscreen; 
         if (Application.platform ==  RuntimePlatform.Android)
         {
-            //ApplicationChrome.statusBarState = ApplAicationChrome.States.Visible;
-            //ApplicationChrome.navigationBarState = ApplicationChrome.States.VisibleOverContent;     
             Screen.fullScreen = false;
-            //ApplicationChrome.statusBarState = ApplicationChrome.States.Visible;
-            //ApplicationChrome.statusBarState = ApplicationChrome.States.
         }
     }
 }

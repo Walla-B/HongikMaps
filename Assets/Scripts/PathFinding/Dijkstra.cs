@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Dijkstra 
 {   
-    public List<Node> Dijkstrasolve(Graph graph, int startnodeindex, int targetnodeindex) {
+    public static List<Node> Dijkstrasolve(Graph graph, int startnodeindex, int targetnodeindex) {
 
         double starttime = Time.realtimeSinceStartup;
 
