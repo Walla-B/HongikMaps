@@ -107,7 +107,7 @@ public class InitGraph
             //Debug.Log("called");
         }
     }
-    */
+    
     //VisualizePathResult visualize = new VisualizePathResult();
     
     
@@ -124,5 +124,6 @@ public class InitGraph
     private GameObject nodeobject;
     [SerializeField]
     private GameObject edgeobject;
+    */
 
 }

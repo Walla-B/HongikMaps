@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class PathFindController : MonoBehaviour
 {
-    // Start is called before the first frame update
+    void Awake() {
+        //InitGraph.InitializeGraph();
+    }
     void Start()
     {
         
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+        //IF PATHFINDING REQUESTS ARE MADE
     }
 }
