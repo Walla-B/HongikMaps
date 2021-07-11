@@ -23,6 +23,12 @@ public class VisualizePathResult
             nodecompobject.tag = "Instantiatepath";
 
             //Draw Edges
+
+            //If Node.type == elevator && Node[i+1].type == elevator
+            //Instantiate nodeobj in middle of two points, set vertical localscale to match the size,
+            //so that elevator path appears as cylinder shape.
+            
+            //can be optimized by seperating case:  node[i].type == elevator && node[i+1].type != elevator, do not initiate nodes between start and end.
             if (i < node.Count - 1) {
                 anglebetweennode = node[i].Coordinate - node[i+1].Coordinate;
                 lengthbetweennode = Vector3.Distance(node[i].Coordinate,node[i+1].Coordinate);

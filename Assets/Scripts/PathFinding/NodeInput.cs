@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class NodeInput : MonoBehaviour
 {
-    private int inputcounter = 0;
+    //private int inputcounter = 0;
     // Update is called once per frame
     void Update()
     {

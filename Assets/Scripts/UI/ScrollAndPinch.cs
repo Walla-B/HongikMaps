@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//TODO:
+//CHANGE ALL INERTIA MOVEMENTS IMPLEMENTED WITH TIME-TRIGGER TO COUROUTINE()
 public class ScrollAndPinch : MonoBehaviour
 {   
     //Visible Components
@@ -117,7 +119,7 @@ public class ScrollAndPinch : MonoBehaviour
                 ZoomCamera(lastzoomfactor, lastzoommotion);
                 //Mathf.Lerp(lastzoomfactor,1,100 * Time.deltaTime);
                 //ZoomCamera(Mathf.Lerp(lastzoomfactor,1,100 * Time.deltaTime), Vector3.Lerp(lastzoommotion,Vector3.zero,100*Time.deltaTime));
-                Debug.Log("Zoom_interp Working");
+                //Debug.Log("Zoom_interp Working");
             }
             if (rotateinertiatoggle == true) {
                 lastrotatetheta = Mathf.Lerp(lastrotatetheta, 0f, 10*Time.deltaTime);
@@ -209,14 +211,14 @@ public class ScrollAndPinch : MonoBehaviour
                     lastzoommotion = (init_pivot-centerray);
 
                     zoominertiatoggle = true;
-                    Debug.Log("Zoominertia set to true");
+                    //Debug.Log("Zoominertia set to true");
                     elapsedtime = 0f;
                 }
                 if (rotateflag == true) {
                     lastrotatetheta = rotatetheta;
 
                     rotateinertiatoggle = true;
-                    Debug.Log("Rotateinertia set to true");
+                    //Debug.Log("Rotateinertia set to true");
                     elapsedtime = 0f;
                 }
                 ClearFlag();
@@ -255,6 +257,7 @@ public class ScrollAndPinch : MonoBehaviour
         rotateflag = false;
         initdataflag = false;
     }
+    //protected int Setmotion(float theta, float zoom, float leantheta)
     protected int ZoomOrRotate(float theta, float zoom) {
          
         temp_zoomdist *= zoom;
@@ -266,8 +269,13 @@ public class ScrollAndPinch : MonoBehaviour
         else if (Mathf.Abs(init_theta) >= threshhold_theta) {
             return 1;    
         }
+      /*else if (Passes Camera Lean threshold) {
+            return 2;
+        } */
+
         else
             return 2;
+            //return 3;
         
     }
     protected void ClearZoomOrRotateParam() {
@@ -311,7 +319,22 @@ public class ScrollAndPinch : MonoBehaviour
     }
 
     protected void RotateCamera(Vector3 position , float theta) {
-        Camera.transform.RotateAround(position, Plane.normal, theta / 2);
+        Camera.transform.RotateAround(position,Plane.normal, theta / 2);
+    }
+
+    protected void LeanCamera(Vector3 position, float theta) {
+        
+        /*
+        if (CameraAngle += theta > Maxangle) {
+            return;
+        }
+        else if (CameraAngle -= theta < Minangle) {
+            return;
+        }
+        //Axis should be Cross Product of two vectors
+        //Vector3 axis = Vector3.Cross(Plane.normal,current positon - Planeposition(Screenpos))
+        Camera.transform.RotateAround(position,axis,theta);
+        */
     }
 
 
