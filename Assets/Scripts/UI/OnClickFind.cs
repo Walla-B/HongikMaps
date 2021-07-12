@@ -66,13 +66,20 @@ public class OnClickFind : MonoBehaviour
         //Destroy(targetobj2,5.0f);
     }
     public void FindLocationOnClick(){
+
+        OnCallDestroyPrevious_PointerObj();
+        int tgtnodeindex = int.Parse(target.text);
+        Vector3 worldpos = graph.GetNodeInGraph(tgtnodeindex).Coordinate;
         //targetpointer.transform.SetParent(canvas.transform);
-        Debug.Log("findobjonclick");
-        Vector3 planepos = Camera.main.WorldToScreenPoint(graph.GetNodeInGraph(0).Coordinate);
-        //Debug.Log(planepos.x + "  " + planepos.y + "  " + planepos.z);
-        GameObject targetobj;
-        targetobj = Instantiate(endpoint,planepos,Quaternion.identity) as GameObject;
-        targetobj.transform.SetParent(uiobj.transform,false);
+        //Debug.Log("findobjonclick");
+        Vector3 planepos = Camera.main.WorldToScreenPoint(worldpos);
+        instantiatedend = Instantiate(endpoint,planepos,Quaternion.identity,uiobj.transform);
+        instantiatedend.tag = "PointerObj";
+
+        instantiatedend.GetComponent<RectTransform>().localScale = new Vector3(1f,1f,1f);
+        displaypointer = true;
+
+        endcoord = worldpos;
         //targetobj = Instantiate(targetpointer,);
         //var canvass = new GameObject("canvas",30f);
     }
@@ -85,11 +92,15 @@ public class OnClickFind : MonoBehaviour
             }
     }
 
-
+    //Using LateUpdate(), pointer's jiggly motion is now fixed.
+    //TODO:
+    //this code might can be optimized by checking current maincamera's movement is zero or not.
     void LateUpdate(){
         if (displaypointer == true) {
-            instantiatedstart.GetComponent<RectTransform>().position = Camera.main.WorldToScreenPoint(startcoord);
             instantiatedend.GetComponent<RectTransform>().position = Camera.main.WorldToScreenPoint(endcoord);
+            if (instantiatedstart != null) {
+                instantiatedstart.GetComponent<RectTransform>().position = Camera.main.WorldToScreenPoint(startcoord);
+            }
         }
 
     }
