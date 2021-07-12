@@ -68,6 +68,8 @@ public class OnClickFind : MonoBehaviour
     public void FindLocationOnClick(){
 
         OnCallDestroyPrevious_PointerObj();
+        VisualizePathResult.OnCallDestroyPrevious_PathObj();
+        
         int tgtnodeindex = int.Parse(target.text);
         Vector3 worldpos = graph.GetNodeInGraph(tgtnodeindex).Coordinate;
         //targetpointer.transform.SetParent(canvas.transform);
