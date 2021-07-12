@@ -11,7 +11,7 @@ public class VisualizePathResult
     public static void VisulaizePath (List<Node> node , GameObject nodeobject, GameObject edgeobject) {
 
         //Destroys previously added path components
-        OncallDestroyPrevious();
+        OnCallDestroyPrevious_PathObj();
 
         Vector3 anglebetweennode = new Vector3();
         Vector3 lengthtoscale = new Vector3();
@@ -45,7 +45,7 @@ public class VisualizePathResult
 
     }
 
-    public static void OncallDestroyPrevious(){
+    public static void OnCallDestroyPrevious_PathObj(){
         var previousObjects = GameObject.FindGameObjectsWithTag("Instantiatepath");
             for (int i = 0; i < previousObjects.Length ; i++) {
                 GameObject.Destroy(previousObjects[i]);
