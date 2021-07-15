@@ -117,6 +117,10 @@ public class OnClickFind : MonoBehaviour
 
     }
     void Update(){
+        if (Input.touchCount >= 1 && elapsedtime >= 0.3f) {
+            moveinertiatoggle = false;
+            elapsedtime = 0;
+        }
         if (moveinertiatoggle == true) {
             elapsedtime += Time.deltaTime;
             Camera.main.transform.position = Vector3.Lerp(Camera.main.transform.position,targetPosition, 5 * Time.deltaTime);
