@@ -17,6 +17,7 @@ public class OnClickFind : MonoBehaviour
     private GameObject instantiatedstart, instantiatedend;
     private Vector3 startcoord, endcoord;
     void Awake(){
+        plane.SetNormalAndPosition(Vector3.up,new Vector3(0,plane_y_position,0));
         graph = InitGraph.InitiateGraphFromData();
         DebugGraph.DrawGraph(graph);
         //Debug.Log("grpah initialized");
@@ -61,6 +62,9 @@ public class OnClickFind : MonoBehaviour
 
         displaypointer = true;
         
+        
+        targetPosition = Camera.main.transform.position + Planeposition(planepos1) - Planeposition(new Vector3(Screen.width/2,Screen.height/2,0));
+        moveinertiatoggle = true;
         //Destroy for debug
         //Destroy(targetobj,5.0f);
         //Destroy(targetobj2,5.0f);
@@ -82,6 +86,10 @@ public class OnClickFind : MonoBehaviour
         displaypointer = true;
 
         endcoord = worldpos;
+
+
+        targetPosition = Camera.main.transform.position + Planeposition(planepos) - Planeposition(new Vector3(Screen.width/2,Screen.height/2,0));
+        moveinertiatoggle = true;
         //targetobj = Instantiate(targetpointer,);
         //var canvass = new GameObject("canvas",30f);
     }
@@ -93,7 +101,32 @@ public class OnClickFind : MonoBehaviour
                 GameObject.Destroy(previousObjects[i]);
             }
     }
+    private Vector3 Planeposition(Vector3 screenpos) {
+        var rayNow = Camera.main.ScreenPointToRay(screenpos);
+        if (plane.Raycast(rayNow, out var enterNow))
+            return rayNow.GetPoint(enterNow);
 
+        return Vector3.zero;
+    }
+    private Plane plane;
+    private float plane_y_position = -10;
+    private float elapsedtime = 0f;
+    private bool moveinertiatoggle;
+    private Vector3 targetPosition;
+    private void MoveCameraToPoint(){
+
+    }
+    void Update(){
+        if (moveinertiatoggle == true) {
+            elapsedtime += Time.deltaTime;
+            Camera.main.transform.position = Vector3.Lerp(Camera.main.transform.position,targetPosition, 5 * Time.deltaTime);
+
+            if (elapsedtime >= 2f) {
+                elapsedtime = 0;
+                moveinertiatoggle = false;
+            }
+        }
+    }
     //Using LateUpdate(), pointer's jiggly motion is now fixed.
     //TODO:
     //this code might can be optimized by checking current maincamera's movement is zero or not.
@@ -106,4 +139,5 @@ public class OnClickFind : MonoBehaviour
         }
 
     }
+
 }
