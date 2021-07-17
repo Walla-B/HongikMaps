@@ -322,20 +322,6 @@ public class ScrollAndPinch : MonoBehaviour
         Camera.transform.RotateAround(position,Plane.normal, theta / 2);
     }
 
-    protected void LeanCamera(Vector3 position, float theta) {
-        
-        /*
-        if (CameraAngle += theta > Maxangle) {
-            return;
-        }
-        else if (CameraAngle -= theta < Minangle) {
-            return;
-        }
-        //Axis should be Cross Product of two vectors
-        //Vector3 axis = Vector3.Cross(Plane.normal,current positon - Planeposition(Screenpos))
-        Camera.transform.RotateAround(position,axis,theta);
-        */
-    }
 
 
 }

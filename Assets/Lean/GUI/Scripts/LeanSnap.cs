@@ -64,6 +64,7 @@ namespace Lean.Gui
 		/// <summary>This event will be invoked when the snap position changes.</summary>
 		public Vector2IntEvent OnPositionChanged { get { if (onPositionChanged == null) onPositionChanged = new Vector2IntEvent(); return onPositionChanged; } } [SerializeField] private Vector2IntEvent onPositionChanged;
 
+
 		[System.NonSerialized]
 		private RectTransform cachedRectTransform;
 

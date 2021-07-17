@@ -1,15 +1,23 @@
-﻿using System;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 public class SidePanelControl : MonoBehaviour
 {   
-    [Serializable]
+    private bool isOriginalPos = false;
+    [System.Serializable]
     public class MyEventType : UnityEvent { }
  
-    public MyEventType OnEvent;
+    public MyEventType OnExvent;
 
-    public void Debugthis(Vector2Int something) {
-        if (something == Vector2Int.zero) {
+    public void InvokeEventWhenPositionIsZero(Vector2Int currentposition) {
+        if (currentposition == Vector2Int.zero) {
+            isOriginalPos = true;
+            OnExvent.Invoke();
+        }
+        else if (currentposition != Vector2Int.zero) {
+            isOriginalPos = false;
         }
     }
 }
