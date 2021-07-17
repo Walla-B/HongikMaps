@@ -7,6 +7,7 @@ public class VisualizePathResult
     //using linerenderer component to draw path is easy, but looks bad.
     //calculating each vertex at certain nodes and making a mesh to render
     //a component might be hard, but i will look good with a Unlit/Color shader.
+    
 
     public static void VisulaizePath (List<Node> node , GameObject nodeobject, GameObject edgeobject) {
 
@@ -16,10 +17,14 @@ public class VisualizePathResult
         Vector3 anglebetweennode = new Vector3();
         Vector3 lengthtoscale = new Vector3();
         float lengthbetweennode = new float();
+        
+        //Initiated Objects belongs to parent "PathObjects"
+        GameObject parent = GameObject.Find("PathObjects");
         //drawing nodes 
         for (int i = 0 ; i < node.Count; i++ ) {
             //Draw Nodes
-            GameObject nodecompobject = GameObject.Instantiate(nodeobject,node[i].Coordinate,Quaternion.identity);
+            GameObject nodecompobject = GameObject.Instantiate(nodeobject,node[i].Coordinate,Quaternion.identity,parent.transform);
+            
             nodecompobject.tag = "Instantiatepath";
 
             //Draw Edges
@@ -34,7 +39,7 @@ public class VisualizePathResult
                 lengthbetweennode = Vector3.Distance(node[i].Coordinate,node[i+1].Coordinate);
                 lengthtoscale = new Vector3(1f,0.2f,lengthbetweennode);
                 
-                GameObject edgecompobject = GameObject.Instantiate(edgeobject,(node[i].Coordinate + node[i+1].Coordinate)/2,Quaternion.LookRotation(anglebetweennode,Vector3.up)); //.transform.localScale = lengthtoscale;
+                GameObject edgecompobject = GameObject.Instantiate(edgeobject,(node[i].Coordinate + node[i+1].Coordinate)/2,Quaternion.LookRotation(anglebetweennode,Vector3.up),parent.transform); //.transform.localScale = lengthtoscale;
                 edgecompobject.transform.localScale = lengthtoscale;
                 edgecompobject.tag = "Instantiatepath";
             }
