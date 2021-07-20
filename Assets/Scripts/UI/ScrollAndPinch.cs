@@ -44,6 +44,8 @@ public class ScrollAndPinch : MonoBehaviour
     private float lastzoomfactor , lastrotatetheta = 0f;
     private Vector3 lastzoommotion = Vector3.zero;
     
+    //TODO:
+    //HOW DO I BLOCK RAYCAST THROUGH UI OBJECTS?????
 
     //public GameObject Debugobject;
 
@@ -53,7 +55,8 @@ public class ScrollAndPinch : MonoBehaviour
             Camera = Camera.main;
     }
 
-    private void Update() {   
+    private void Update() { 
+
         
         //TODO: 움직이는 것도 일정 treshold 설정해서 클릭 동작과 구분할수 있어야함
         //Update Plane
@@ -193,7 +196,7 @@ public class ScrollAndPinch : MonoBehaviour
                     //RotateCamera(position,rotatetheta);
                 }
                 else
-                   return; 
+                    return; 
             }
 
             //zoom camera for orthographic
