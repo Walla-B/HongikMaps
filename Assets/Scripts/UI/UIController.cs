@@ -27,7 +27,7 @@ public class UIController : MonoBehaviour
     private TextMeshProUGUI mode;
     void Update()
     {
-        mode.text = uiDepth.ToString();
+        //mode.text = uiDepth.ToString();
         /*
         for testing in Playmode
 
@@ -87,8 +87,19 @@ public class UIController : MonoBehaviour
     }
 
     // pretty sure there is a better way of doing this
+
+    public void SetMovableFalse(){
+        ScrollAndPinch.movable = false;
+    }
+    public void SetMovableTrue(){
+        ScrollAndPinch.movable = true;
+    }
+    public void UIDepthtoZero(){
+        uiDepth = 0;
+    }
     public void UIDepthtoOne(){
         uiDepth = 1;
+        ScrollAndPinch.movable = false;
     }
     public void UIDepthtoTwo(){
         uiDepth = 2;

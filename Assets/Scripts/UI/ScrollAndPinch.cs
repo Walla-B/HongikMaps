@@ -50,6 +50,8 @@ public class ScrollAndPinch : MonoBehaviour
     //public GameObject Debugobject;
 
     //if camera is null, put maincamera in Camera
+
+    public static bool movable = true;
     private void Awake() {
         if (Camera == null)
             Camera = Camera.main;
@@ -80,7 +82,8 @@ public class ScrollAndPinch : MonoBehaviour
             }
             if (Input.GetTouch(0).phase == TouchPhase.Moved || Input.GetTouch(0).phase == TouchPhase.Ended) {
                 
-                Camera.transform.Translate(Delta1 * movethershhold_factor, Space.World);
+                MoveCamera(Delta1 * movethershhold_factor);
+                //Camera.transform.Translate(Delta1 * movethershhold_factor, Space.World);
 
                 if (Input.GetTouch(0).phase == TouchPhase.Ended) {
                     Touchphase_endposition = Camera.transform.position;
@@ -297,34 +300,38 @@ public class ScrollAndPinch : MonoBehaviour
         lastzoommotion = Vector3.zero;
     }
 
-    protected void MoveCamera() {
+    protected void MoveCamera(Vector3 translation) {
         //TODO:
         //Set Move Boundary
         //Set Threshold to define it as "moving"
+        if (movable == true) {
+            Camera.transform.Translate(translation, Space.World);
+        }
 
 
 
     }
     protected void ZoomCamera(float zoom,Vector3 deltaPos) {
-        
-        //zoom limit, 더 나은 방법 존재 가능
-        if (Camera.orthographicSize * zoom <= MAXZOOM) {
-            return;
+
+        if (movable == true) { 
+            //zoom limit, 더 나은 방법 존재 가능
+            if (Camera.orthographicSize * zoom <= MAXZOOM) {
+                return;
+            }
+            else if (Camera.orthographicSize * zoom >= MINZOOM) {
+                return;
+            }
+            
+            Camera.orthographicSize = Camera.orthographicSize * zoom;
+            //while zooming, also moves camera to "zoom" into desired point
+            Camera.transform.Translate(deltaPos*(1-zoom),Space.World);
+            //Move Camera DeltaPos*(1-zoom)
         }
-        else if (Camera.orthographicSize * zoom >= MINZOOM) {
-            return;
-        }
-        
-        Camera.orthographicSize = Camera.orthographicSize * zoom;
-        //while zooming, also moves camera to "zoom" into desired point
-        Camera.transform.Translate(deltaPos*(1-zoom),Space.World);
-        //Move Camera DeltaPos*(1-zoom)
     }
 
     protected void RotateCamera(Vector3 position , float theta) {
-        Camera.transform.RotateAround(position,Plane.normal, theta / 2);
+        if (movable == true) {
+            Camera.transform.RotateAround(position,Plane.normal, theta / 2);
+        }
     }
-
-
-
 }
