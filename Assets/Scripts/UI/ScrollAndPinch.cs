@@ -82,7 +82,7 @@ public class ScrollAndPinch : MonoBehaviour
             }
             if (Input.GetTouch(0).phase == TouchPhase.Moved || Input.GetTouch(0).phase == TouchPhase.Ended) {
                 
-                MoveCamera(Delta1 * movethershhold_factor);
+                MoveCamera(Delta1 * movethershhold_factor, false);
                 //Camera.transform.Translate(Delta1 * movethershhold_factor, Space.World);
 
                 if (Input.GetTouch(0).phase == TouchPhase.Ended) {
@@ -110,7 +110,7 @@ public class ScrollAndPinch : MonoBehaviour
 
         if (moveinertiatoggle || zoominertiatoggle || rotateinertiatoggle == true) {
             elapsedtime += Time.deltaTime;
-            if (moveinertiatoggle == true) {
+            if (moveinertiatoggle && movable == true) {
                 Camera.transform.position = Vector3.Lerp(Camera.transform.position , Touchphase_endposition + (Delta3 * 4f) ,100 * t * Time.deltaTime);
             }
             if (zoominertiatoggle == true) {
@@ -300,16 +300,13 @@ public class ScrollAndPinch : MonoBehaviour
         lastzoommotion = Vector3.zero;
     }
 
-    protected void MoveCamera(Vector3 translation) {
+    protected void MoveCamera(Vector3 translation, bool isInertia) {
         //TODO:
         //Set Move Boundary
         //Set Threshold to define it as "moving"
         if (movable == true) {
             Camera.transform.Translate(translation, Space.World);
         }
-
-
-
     }
     protected void ZoomCamera(float zoom,Vector3 deltaPos) {
 

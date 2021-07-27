@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -87,6 +87,7 @@ public class UIController : MonoBehaviour
     }
 
     // pretty sure there is a better way of doing this
+    // To prevent "scrolling", need to refactor ScrollandPinch.cs , Seperate "Scrolling" funciton.
 
     public void SetMovableFalse(){
         ScrollAndPinch.movable = false;
@@ -94,12 +95,14 @@ public class UIController : MonoBehaviour
     public void SetMovableTrue(){
         ScrollAndPinch.movable = true;
     }
+
+
+
     public void UIDepthtoZero(){
         uiDepth = 0;
     }
     public void UIDepthtoOne(){
         uiDepth = 1;
-        ScrollAndPinch.movable = false;
     }
     public void UIDepthtoTwo(){
         uiDepth = 2;
