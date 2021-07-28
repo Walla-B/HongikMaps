@@ -28,22 +28,26 @@ public class UIController : MonoBehaviour
     void Update()
     {
         //mode.text = uiDepth.ToString();
-        /*
-        for testing in Playmode
+        // for testing in Playmode
 
-        if (Input.GetKeyDown(KeyCode.R)){
-            escapecount++;
-            if (escapecount > 1) {
-                Application.Quit();
-            }
+       if (Application.platform == RuntimePlatform.WindowsPlayer) {
 
-            GameObject notification = Instantiate(quitnotification,new Vector3(Screen.width/2,Screen.height/12,0f),Quaternion.identity,uicanvas.transform);
-            GameObject.Destroy(notification,3f);
+           if (uiDepth == 0 && Input.GetKeyDown(KeyCode.Escape)) {
+               escapecount++;
 
-            StartCoroutine(ClickTime());
-        }
-        
-        */
+               StartCoroutine(ClickTime());
+               if (escapecount > 1) {
+                   Application.Quit();
+               }
+                GameObject notification = Instantiate(quitnotification,new Vector3(Screen.width/2,Screen.height/12,0f),Quaternion.identity,uicanvas.transform);
+                GameObject.Destroy(notification,4f);
+           }
+           else if (uiDepth == 1 && Input.GetKeyDown(KeyCode.Escape)){
+               D1Event.Invoke();
+               DecreaseUIDepth();
+           }
+
+       }
 
         //If platform it Android and Escape button is pressed
        if (Application.platform == RuntimePlatform.Android) {
@@ -62,20 +66,6 @@ public class UIController : MonoBehaviour
                D1Event.Invoke();
                DecreaseUIDepth();
            }
-           /*
-           if (Input.GetKeyDown(KeyCode.Escape)){
-                escapecount++;
-
-                //wait for 4 seconds before getting another input
-                StartCoroutine(ClickTime());
-                if (escapecount > 1) {
-                    Application.Quit();
-                }
-                //Instantiate quit notifications in canvas;
-                GameObject notification = Instantiate(quitnotification,new Vector3(Screen.width/2,Screen.height/12,0f),Quaternion.identity,uicanvas.transform);
-                GameObject.Destroy(notification,4f);
-           }
-           */
 
        }
        else if (Application.platform == RuntimePlatform.IPhonePlayer) {
