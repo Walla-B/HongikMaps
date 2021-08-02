@@ -30,7 +30,7 @@ public class UIController : MonoBehaviour
         //mode.text = uiDepth.ToString();
         // for testing in Playmode
 
-       if (Application.platform == RuntimePlatform.WindowsPlayer) {
+       if (true) {
 
            if (uiDepth == 0 && Input.GetKeyDown(KeyCode.Escape)) {
                escapecount++;
