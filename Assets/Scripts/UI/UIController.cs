@@ -22,7 +22,6 @@ public class UIController : MonoBehaviour
 
     public MyEventType D1Event, D2Event_example;
 
-
     [SerializeField]
     private TextMeshProUGUI mode;
     void Update()

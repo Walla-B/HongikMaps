@@ -1,7 +1,44 @@
-﻿/*
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
+using UnityEngine.Events;
+using UnityEditor.EventSystems;
+using TMPro;
+public class TextAutoComplete : MonoBehaviour {
+	private bool isAutoCompletePanelOn = false;
+	[SerializeField]
+	private TMP_InputField inputtext;
+	[System.Serializable]
+	public class MyEventType : UnityEvent { }
+	public MyEventType OnFirstSelect, OnEndSelect;
+
+
+	public void AutoCompleteTextField (TMP_InputField input) {
+
+		if (isAutoCompletePanelOn == false) {
+			OnFirstSelect.Invoke();	
+			setAutoCompletePanelTrue();
+		}
+		
+		Debug.Log(input.text);
+		Debug.Log("AutoComplete Running");
+
+
+		// If matching Strings are founds, 
+		// Instantiate GUI Objects with Corresponding Node information
+	}
+	
+	public void setAutoCompletePanelTrue() {
+		isAutoCompletePanelOn = true;
+	}
+	
+	public void setAutoCompletePanelFalse() {
+		isAutoCompletePanelOn = false;
+		OnEndSelect.Invoke();
+	}
+}
+
+/*
 public sealed class EditorExtend
 {
 #region Text AutoComplete
