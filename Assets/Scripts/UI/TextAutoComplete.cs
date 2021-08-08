@@ -2,7 +2,6 @@
 using UnityEditor;
 using System.Collections.Generic;
 using UnityEngine.Events;
-using UnityEditor.EventSystems;
 using TMPro;
 public class TextAutoComplete : MonoBehaviour {
 	private bool isAutoCompletePanelOn = false;
@@ -19,10 +18,15 @@ public class TextAutoComplete : MonoBehaviour {
 			OnFirstSelect.Invoke();	
 			setAutoCompletePanelTrue();
 		}
-		
+		else if (string.IsNullOrEmpty(input.text)) {
+			setAutoCompletePanelFalse();
+		}
+
+
+		/*
 		Debug.Log(input.text);
 		Debug.Log("AutoComplete Running");
-
+		*/
 
 		// If matching Strings are founds, 
 		// Instantiate GUI Objects with Corresponding Node information

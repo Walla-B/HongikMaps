@@ -21,7 +21,9 @@ public class UIController : MonoBehaviour
     public class MyEventType : UnityEvent { }
 
     public MyEventType D1Event, D2Event_example;
+    private Stack<MyEventType> EventStack;
 
+    
     [SerializeField]
     private TextMeshProUGUI mode;
     void Update()
