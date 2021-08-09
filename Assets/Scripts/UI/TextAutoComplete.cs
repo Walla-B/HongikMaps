@@ -9,7 +9,7 @@ public class TextAutoComplete : MonoBehaviour {
 	private TMP_InputField inputtext;
 	[System.Serializable]
 	public class MyEventType : UnityEvent { }
-	public MyEventType OnFirstSelect, OnEndSelect;
+	public MyEventType OnFirstSelect, OnClose;
 
 
 	public void AutoCompleteTextField (TMP_InputField input) {
@@ -38,7 +38,7 @@ public class TextAutoComplete : MonoBehaviour {
 	
 	public void setAutoCompletePanelFalse() {
 		isAutoCompletePanelOn = false;
-		OnEndSelect.Invoke();
+		OnClose.Invoke();
 	}
 }
 
