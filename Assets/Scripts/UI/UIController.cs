@@ -33,30 +33,30 @@ public class UIController : MonoBehaviour
 
     ///////////////////////
     void Update()
-    {
+    {   
         //mode.text = uiDepth.ToString();
         // for testing in Playmode
+        if (Input.GetKeyDown(KeyCode.Escape) && allowinput == true) {
 
-       if (true) {
-           if (Input.GetKeyDown(KeyCode.Escape) && allowinput == true) {
-               if (eventStack.Count == 0) {
+            allowinput = false;
+            Debug.Log("allowinput set to false");
+            StartCoroutine(InputWait());
 
-                    escapecount++;
+            if (eventStack.Count == 0) {
 
-                    StartCoroutine(ClickTime());
-                    if (escapecount > 1) {
-                        Application.Quit();
-                    }
-                    GameObject notification = Instantiate(quitnotification,new Vector3(Screen.width/2,Screen.height/12,0f),Quaternion.identity,popUpParentCanvas.transform);
-                    GameObject.Destroy(notification,3f);
-               }
-               else if (eventStack.Count != 0) {
-                    PopStack_CloseActivities();
-               }
-                allowinput = false;
-               StartCoroutine(InputWait());
-           }
-       }
+                escapecount++;
+
+                StartCoroutine(ClickTime());
+                if (escapecount > 1) {
+                    Application.Quit();
+                }
+                GameObject notification = Instantiate(quitnotification,new Vector3(Screen.width/2,Screen.height/12,0f),Quaternion.identity,popUpParentCanvas.transform);
+                GameObject.Destroy(notification,3f);
+            }
+            else if (eventStack.Count != 0) {
+                PopStack_CloseActivities();
+            }
+        }
 
 
 
@@ -174,6 +174,7 @@ public class UIController : MonoBehaviour
     public void PopStack_CloseActivities() {
         if (eventStack.Count != 0) {
             MyEventType myevent = eventStack.Pop();
+            Debug.Log("Popstack called");
             myevent.Invoke();
         }
 
@@ -210,7 +211,8 @@ public class UIController : MonoBehaviour
         escapecount = 0;
     }
     private IEnumerator InputWait() {
-        yield return new WaitForSeconds(.2f);
+        yield return new WaitForSeconds(1f);
         allowinput = true;
+        Debug.Log("allowinput set to true");
     }
 }
