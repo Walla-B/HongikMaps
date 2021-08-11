@@ -39,7 +39,6 @@ public class UIController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape) && allowinput == true) {
 
             allowinput = false;
-            Debug.Log("allowinput set to false");
             StartCoroutine(InputWait());
 
             if (eventStack.Count == 0) {
@@ -90,24 +89,28 @@ public class UIController : MonoBehaviour
         //If platform it Android and Escape button is pressed
        if (Application.platform == RuntimePlatform.Android) {
 
-           if (eventStack.Count == 0 && Input.GetKeyDown(KeyCode.Escape)) {
-               escapecount++;
+        if (Input.GetKeyDown(KeyCode.Escape) && allowinput == true) {
 
-               StartCoroutine(ClickTime());
-               if (escapecount > 1) {
-                   Application.Quit();
-               }
+            allowinput = false;
+            StartCoroutine(InputWait());
+
+            if (eventStack.Count == 0) {
+
+                escapecount++;
+
+                StartCoroutine(ClickTime());
+                if (escapecount > 1) {
+                    Application.Quit();
+                }
                 GameObject notification = Instantiate(quitnotification,new Vector3(Screen.width/2,Screen.height/12,0f),Quaternion.identity,popUpParentCanvas.transform);
                 GameObject.Destroy(notification,3f);
-           }
-           else if (eventStack.Count != 0 && Input.GetKeyDown(KeyCode.Escape)){
-               PopStack_CloseActivities();
-           }
-
-       }
-
+            }
+            else if (eventStack.Count != 0) {
+                PopStack_CloseActivities();
+            }
+        }
+    }
        else if (Application.platform == RuntimePlatform.IPhonePlayer) {
-           //TODO:
            if (Input.GetKeyDown(KeyCode.Escape)) {
                Application.Quit();
            }
@@ -211,8 +214,7 @@ public class UIController : MonoBehaviour
         escapecount = 0;
     }
     private IEnumerator InputWait() {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(.2f);
         allowinput = true;
-        Debug.Log("allowinput set to true");
     }
 }
