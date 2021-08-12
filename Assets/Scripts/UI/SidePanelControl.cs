@@ -6,18 +6,30 @@ using UnityEngine.EventSystems;
 public class SidePanelControl : MonoBehaviour
 {   
     private bool isOriginalPos = false;
+    private bool blockInvoke = false;
     [System.Serializable]
     public class MyEventType : UnityEvent { }
- 
-    public MyEventType OnExvent;
+    
+    public MyEventType PopstackBehalfEverything;
+    
 
     public void InvokeEventWhenPositionIsZero(Vector2Int currentposition) {
-        if (currentposition == Vector2Int.zero) {
-            isOriginalPos = true;
-            OnExvent.Invoke();
+
+        if (blockInvoke == false) {
+            if (currentposition == Vector2Int.zero) {
+                isOriginalPos = true;
+                PopstackBehalfEverything.Invoke();
+            }
+            else if (currentposition != Vector2Int.zero) {
+                isOriginalPos = false;
+            }
         }
-        else if (currentposition != Vector2Int.zero) {
-            isOriginalPos = false;
-        }
+    }
+
+    public void BlockInvokeOnPositionChanged() {
+        blockInvoke = true;
+    }
+    public void AllowInvokeOnPositionChanged() {
+        blockInvoke = false;
     }
 }

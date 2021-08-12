@@ -52,7 +52,7 @@ public class UIController : MonoBehaviour
                 GameObject notification = Instantiate(quitnotification,new Vector3(Screen.width/2,Screen.height/12,0f),Quaternion.identity,popUpParentCanvas.transform);
                 GameObject.Destroy(notification,3f);
             }
-            else if (eventStack.Count != 0) {
+            else if (eventStack.Count >= 0) {
                 PopStack_CloseActivities();
             }
         }
@@ -177,7 +177,6 @@ public class UIController : MonoBehaviour
     public void PopStack_CloseActivities() {
         if (eventStack.Count != 0) {
             MyEventType myevent = eventStack.Pop();
-            Debug.Log("Popstack called");
             myevent.Invoke();
         }
 
