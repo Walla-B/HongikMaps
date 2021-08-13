@@ -2224,6 +2224,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 575455647}
+        m_MethodName: BlockInvokeOnPositionChanged
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &189194360
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3572,19 +3583,8 @@ MonoBehaviour:
   onClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2034572577}
-        m_MethodName: TurnOff
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 189194359}
-        m_MethodName: DecreaseUIDepth
+        m_MethodName: PopStack_CloseActivities
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5468,11 +5468,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b6b5d637861d5d46946f7018023ccee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OnExvent:
+  PopstackBehalfEverything:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2034572577}
-        m_MethodName: TurnOff
+      - m_Target: {fileID: 189194359}
+        m_MethodName: PopStack_CloseActivities
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -13723,20 +13723,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b6b5d637861d5d46946f7018023ccee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OnExvent:
+  PopstackBehalfEverything:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 659087045}
-        m_MethodName: TurnOff
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!222 &1114040583
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -18014,8 +18003,8 @@ MonoBehaviour:
   onClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2034572577}
-        m_MethodName: TurnOff
+      - m_Target: {fileID: 189194359}
+        m_MethodName: PopStack_CloseActivities
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -18025,17 +18014,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 189194359}
-        m_MethodName: DecreaseUIDepth
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 0
 --- !u!4 &1549748032 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5fea8fe5534ddf74fbbad3b38eb9f6f7,
@@ -23864,18 +23842,7 @@ MonoBehaviour:
         m_CallState: 2
   OnClose:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 189194359}
-        m_MethodName: PopStack_CloseActivities
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &1980159959
 GameObject:
   m_ObjectHideFlags: 0
@@ -24517,7 +24484,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 189194359}
-        m_MethodName: UIDepthtoOne
+        m_MethodName: SetMovableFalse
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -24527,8 +24494,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 189194359}
-        m_MethodName: SetMovableFalse
+      - m_Target: {fileID: 575455647}
+        m_MethodName: AllowInvokeOnPositionChanged
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -24541,17 +24508,6 @@ MonoBehaviour:
   onOff:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 189194359}
-        m_MethodName: UIDepthtoZero
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 189194359}
         m_MethodName: SetMovableTrue
         m_Mode: 1
@@ -25580,20 +25536,9 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 2
+        m_CallState: 0
       - m_Target: {fileID: 1974791242}
         m_MethodName: setAutoCompletePanelFalse
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 974066358}
-        m_MethodName: TurnOff
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -25625,8 +25570,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 974066358}
-        m_MethodName: TurnOff
+      - m_Target: {fileID: 189194359}
+        m_MethodName: PopStack_CloseActivities
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 189194359}
+        m_MethodName: PopStack_CloseActivities
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

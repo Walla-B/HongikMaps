@@ -38,7 +38,6 @@ public class TextAutoComplete : MonoBehaviour {
 	
 	public void setAutoCompletePanelFalse() {
 		isAutoCompletePanelOn = false;
-		OnClose.Invoke();
 	}
 }
 

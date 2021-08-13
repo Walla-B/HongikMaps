@@ -173,7 +173,11 @@ public class UIController : MonoBehaviour
     }
 
     // Pop Activities Pushed before and invoke Closing event
-    // Check if stack is empty before Invoking
+    // Check if stack is empty before Invoking, Just call again if two pops are needed.
+    // TODO:
+    // Exception handling needed in InputField_Target so that
+    // wrong input won't block Events After OnClickFind.FindlocationOnClick() in
+    // Top_SearchAutoComplete > LeanWindow.. > Panel_AutoComplete > Button_SearchResult > Lean Button > OnClick().
     public void PopStack_CloseActivities() {
         if (eventStack.Count != 0) {
             MyEventType myevent = eventStack.Pop();
@@ -186,17 +190,6 @@ public class UIController : MonoBehaviour
         /////////////////////
     }
 
-    // Same but twice. 
-    public void PopStack_CloseActivities_twice() {
-        if (eventStack.Count >= 2) {
-            MyEventType myevent1 = eventStack.Pop();
-            MyEventType myevent2 = eventStack.Pop();
-            myevent1.Invoke();
-            myevent2.Invoke();
-        }
-    }
-
-
     /////Debug Obj//////
     public void PrintStack() {
         string str = "";
@@ -204,6 +197,7 @@ public class UIController : MonoBehaviour
             str += "  >>  " + namestring[i];
         }
         Debug.Log(str);
+        Debug.Log("Count: " + eventStack.Count);
     }
 
     ////////////////////
