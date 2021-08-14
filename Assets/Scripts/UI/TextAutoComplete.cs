@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using UnityEngine.Events;
 using TMPro;
 public class TextAutoComplete : MonoBehaviour {
+	
+	//if this param is false, it means searchautocomplete panel is off
+	// and it is ready to initiate.
 	private bool isAutoCompletePanelOn = false;
 	[SerializeField]
 	private TMP_InputField inputtext;
@@ -20,6 +23,7 @@ public class TextAutoComplete : MonoBehaviour {
 		}
 		else if (string.IsNullOrEmpty(input.text)) {
 			setAutoCompletePanelFalse();
+			OnClose.Invoke();
 		}
 
 

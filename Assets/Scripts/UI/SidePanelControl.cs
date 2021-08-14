@@ -10,7 +10,7 @@ public class SidePanelControl : MonoBehaviour
     [System.Serializable]
     public class MyEventType : UnityEvent { }
     
-    public MyEventType PopstackBehalfEverything;
+    public MyEventType OnEvent;
     
 
     public void InvokeEventWhenPositionIsZero(Vector2Int currentposition) {
@@ -18,7 +18,7 @@ public class SidePanelControl : MonoBehaviour
         if (blockInvoke == false) {
             if (currentposition == Vector2Int.zero) {
                 isOriginalPos = true;
-                PopstackBehalfEverything.Invoke();
+                OnEvent.Invoke();
             }
             else if (currentposition != Vector2Int.zero) {
                 isOriginalPos = false;

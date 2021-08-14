@@ -30,7 +30,8 @@ public class UIController : MonoBehaviour
 
     /////Debug Objects/////
     private List<string> namestring = new List<string>();
-
+    [SerializeField]
+    private TextMeshProUGUI hierarchytext, stackNum;
     ///////////////////////
     void Update()
     {   
@@ -128,30 +129,38 @@ public class UIController : MonoBehaviour
     }
 
     public void AddStack_Close_SearchPopUp() {
-        eventStack.Push(Close_SearchPopUpActivity);
         
-        ///// Debug Obj /////
-        namestring.Add("SearchPopUp");
-        PrintStack();
-        /////////////////////
+        //push to stack if only there is no Close_SearchPopUpActivity in stack
+        if (!eventStack.Contains(Close_SearchPopUpActivity)) {
+            eventStack.Push(Close_SearchPopUpActivity);
+        
+            ///// Debug Obj /////
+            namestring.Add("SearchPopUp");
+            PrintStack();
+            /////////////////////
+        }
     }
 
     public void Addstack_Close_TextAutoComplete() {
-        eventStack.Push(Close_TextAutoCompleteActivity);
+        if (!eventStack.Contains(Close_TextAutoCompleteActivity)) {
+            eventStack.Push(Close_TextAutoCompleteActivity);
 
-        ///// Debug Obj /////
-        namestring.Add("TextAutoComplete");
-        PrintStack();
-        /////////////////////
+            ///// Debug Obj /////
+            namestring.Add("TextAutoComplete");
+            PrintStack();
+            /////////////////////
+        }
     }
 
     public void Addstack_Close_PathSearchPopUp() {
-        eventStack.Push(Close_PathSearchPopUpActivity);
+        if (!eventStack.Contains(Close_PathSearchPopUpActivity)) {
+            eventStack.Push(Close_PathSearchPopUpActivity);
 
-        ///// Debug Obj /////
-        namestring.Add("PathSearch");
-        PrintStack();
-        /////////////////////
+            ///// Debug Obj /////
+            namestring.Add("PathSearch");
+            PrintStack();
+            /////////////////////
+        }
     }
 
     public void Addstack_Close_PathMode() {
@@ -164,12 +173,14 @@ public class UIController : MonoBehaviour
     }
 
     public void Addstack_Close_LeftSidePanel() {
-        eventStack.Push(Close_LeftSidePanelActivity);
+        if (!eventStack.Contains(Close_LeftSidePanelActivity)) {
+            eventStack.Push(Close_LeftSidePanelActivity);
 
-        ///// Debug Obj /////
-        namestring.Add("SidePanel");
-        PrintStack();
-        /////////////////////
+            ///// Debug Obj /////
+            namestring.Add("SidePanel");
+            PrintStack();
+            /////////////////////
+        }
     }
 
     // Pop Activities Pushed before and invoke Closing event
@@ -196,8 +207,10 @@ public class UIController : MonoBehaviour
         for (int i = 0; i < namestring.Count; i++) {
             str += "  >>  " + namestring[i];
         }
-        Debug.Log(str);
-        Debug.Log("Count: " + eventStack.Count);
+        // Debug.Log(str);
+        // Debug.Log("Count: " + eventStack.Count);
+        hierarchytext.text = str;
+        stackNum.text = eventStack.Count.ToString();
     }
 
     ////////////////////
