@@ -8,7 +8,7 @@ public class OnClickFind : MonoBehaviour
     [SerializeField]
     private GameObject nodeobject,edgeobject,startpoint,endpoint,uiobj = null;
     [SerializeField]
-    private TMP_InputField start,target = null;
+    private TMP_InputField target, pathfind_start,pathfind_target = null;
     [SerializeField]
     private TextMeshProUGUI outputdist, outputtime, pathmode;
     private Graph graph;
@@ -26,8 +26,8 @@ public class OnClickFind : MonoBehaviour
 
         OnCallDestroyPrevious_PointerObj();
 
-        int sttnodeindex = int.Parse(start.text);
-        int tgtnodeindex = int.Parse(target.text);
+        int sttnodeindex = int.Parse(pathfind_start.text);
+        int tgtnodeindex = int.Parse(pathfind_target.text);
         List<Node> path = Dijkstra.Dijkstrasolve(graph,sttnodeindex,tgtnodeindex);
         //Round the Float distance to integer and add "m" to display unit
         float totalweight = path[path.Count-1].Weight;
