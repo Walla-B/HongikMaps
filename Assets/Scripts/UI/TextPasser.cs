@@ -6,9 +6,23 @@ using TMPro;
 public class TextPasser : MonoBehaviour
 {
     [SerializeField]
-    private TMP_InputField from, to;
+    private TMP_InputField from, to_Start, to_Target;
+    private bool toTarget = true;
 
     public void PassText() {
-        to.text = from.text;
+        if (toTarget == true) {
+            to_Target.text = from.text;
+        }
+        else {
+            to_Start.text = from.text;
+        }
+    }
+
+    public void SetToTargetTrue() {
+        toTarget = true;
+    }
+
+    public void SetToTargetFalse() {
+        toTarget = false;
     }
 }

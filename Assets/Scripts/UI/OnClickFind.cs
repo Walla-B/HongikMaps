@@ -108,6 +108,7 @@ public class OnClickFind : MonoBehaviour
 
         return Vector3.zero;
     }
+
     private Plane plane;
     private float plane_y_position = -10;
     private float elapsedtime = 0f;
