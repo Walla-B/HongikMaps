@@ -17,13 +17,18 @@ public class TextAutoComplete : MonoBehaviour {
 
 	public void AutoCompleteTextField (TMP_InputField input) {
 
-		if (isAutoCompletePanelOn == false) {
-			OnFirstSelect.Invoke();	
-			setAutoCompletePanelTrue();
-		}
-		else if (string.IsNullOrEmpty(input.text)) {
+		if (string.IsNullOrEmpty(input.text)) {
 			setAutoCompletePanelFalse();
 			OnClose.Invoke();
+			Debug.Log("Input_Target is NULL & isAutoCompleteOn is " + isAutoCompletePanelOn);
+		}
+		else if (isAutoCompletePanelOn == false) {
+			OnFirstSelect.Invoke();	
+			setAutoCompletePanelTrue();
+			Debug.Log("before : false, isAutoCompleteOn is " + isAutoCompletePanelOn);
+		}
+		else if (isAutoCompletePanelOn == true) {
+			Debug.Log("before : true, isAutoCompleteOn is " + isAutoCompletePanelOn);
 		}
 
 
