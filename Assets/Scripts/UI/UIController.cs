@@ -23,7 +23,8 @@ public class UIController : MonoBehaviour
 
     [SerializeField]
     private MyEventType Close_SearchPopUpActivity, Close_TextAutoCompleteActivity,
-    Close_PathSearchPopUpActivity, Close_PathModeActivity, Close_LeftSidePanelActivity;
+    Close_PathSearchPopUpActivity, Close_PathModeActivity, Close_LeftSidePanelActivity,
+    Close_BottomInfoPanelActivity;
 
     private Stack<MyEventType> eventStack = new Stack<MyEventType>();
 
@@ -183,6 +184,17 @@ public class UIController : MonoBehaviour
         }
     }
 
+    //This Event is not used for now
+    public void Addstack_Close_BottomInfoPanel() {
+        if (!eventStack.Contains(Close_BottomInfoPanelActivity)) {
+            eventStack.Push(Close_BottomInfoPanelActivity);
+
+            ///// Debug Obj /////
+            namestring.Add("BottomInfoPanel");
+            PrintStack();
+            /////////////////////
+        }
+    }
     // Pop Activities Pushed before and invoke Closing event
     // Check if stack is empty before Invoking, Just call again if two pops are needed.
     // TODO:
