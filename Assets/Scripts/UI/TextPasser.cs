@@ -17,7 +17,14 @@ public class TextPasser : MonoBehaviour
             to_Start.text = from.text;
         }
     }
-
+    public void PassTextReverse() {
+        if (toTarget == true) {
+            from.text = to_Target.text;
+        }
+        else {
+            from.text =  to_Start.text;
+        }
+    }
     public void SetToTargetTrue() {
         toTarget = true;
     }
