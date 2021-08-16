@@ -101,6 +101,9 @@ public class OnClickFind : MonoBehaviour
                 GameObject.Destroy(previousObjects[i]);
             }
     }
+    public void OnCallDestroyPrevious_PathObjinScene() {
+        VisualizePathResult.OnCallDestroyPrevious_PathObj();
+    }
     private Vector3 Planeposition(Vector3 screenpos) {
         var rayNow = Camera.main.ScreenPointToRay(screenpos);
         if (plane.Raycast(rayNow, out var enterNow))
