@@ -27,9 +27,11 @@ public class TextPasser : MonoBehaviour
     }
     public void SetToTargetTrue() {
         toTarget = true;
+        Debug.Log("settotarget TRUE");
     }
 
     public void SetToTargetFalse() {
         toTarget = false;
+        Debug.Log("settotarget FALSE");
     }
 }

@@ -14,7 +14,6 @@ public class SidePanelControl : MonoBehaviour
     
 
     public void InvokeEventWhenPositionIsZero(Vector2Int currentposition) {
-
         if (blockInvoke == false) {
             if (currentposition == Vector2Int.zero) {
                 isOriginalPos = true;
