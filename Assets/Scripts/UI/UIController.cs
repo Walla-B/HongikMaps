@@ -24,7 +24,7 @@ public class UIController : MonoBehaviour
     [SerializeField]
     private MyEventType Close_SearchPopUpActivity, Close_TextAutoCompleteActivity,
     Close_PathSearchPopUpActivity, Close_PathModeActivity, Close_LeftSidePanelActivity,
-    Close_BottomInfoPanelActivity;
+    Close_BottomInfoPanelActivity, Event_SwitchSideButton;
 
     private Stack<MyEventType> eventStack = new Stack<MyEventType>();
 
@@ -205,6 +205,9 @@ public class UIController : MonoBehaviour
         if (eventStack.Count != 0) {
             MyEventType myevent = eventStack.Pop();
             myevent.Invoke();
+        }
+        if (eventStack.Count == 0) {
+            Event_SwitchSideButton.Invoke();
         }
 
         ///// Debug Obj /////
