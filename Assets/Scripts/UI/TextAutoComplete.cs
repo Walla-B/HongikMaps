@@ -20,15 +20,15 @@ public class TextAutoComplete : MonoBehaviour {
 		if (string.IsNullOrEmpty(input.text)) {
 			setAutoCompletePanelFalse();
 			OnClose.Invoke();
-			Debug.Log("Input_Target is NULL & isAutoCompleteOn is " + isAutoCompletePanelOn);
+			//Debug.Log("Input_Target is NULL & isAutoCompleteOn is " + isAutoCompletePanelOn);
 		}
 		else if (isAutoCompletePanelOn == false) {
 			OnFirstSelect.Invoke();	
 			setAutoCompletePanelTrue();
-			Debug.Log("before : false, isAutoCompleteOn is " + isAutoCompletePanelOn);
+			//Debug.Log("before : false, isAutoCompleteOn is " + isAutoCompletePanelOn);
 		}
 		else if (isAutoCompletePanelOn == true) {
-			Debug.Log("before : true, isAutoCompleteOn is " + isAutoCompletePanelOn);
+			//Debug.Log("before : true, isAutoCompleteOn is " + isAutoCompletePanelOn);
 		}
 
 

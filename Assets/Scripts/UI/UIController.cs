@@ -24,7 +24,7 @@ public class UIController : MonoBehaviour
     [SerializeField]
     private MyEventType Close_SearchPopUpActivity, Close_TextAutoCompleteActivity,
     Close_PathSearchPopUpActivity, Close_PathModeActivity, Close_LeftSidePanelActivity,
-    Close_BottomInfoPanelActivity, Event_SwitchSideButton;
+    Close_BottomInfoPanelActivity, Event_SwitchSideButton, Event_SwitchBackButton;
 
     private Stack<MyEventType> eventStack = new Stack<MyEventType>();
 
@@ -206,14 +206,24 @@ public class UIController : MonoBehaviour
             MyEventType myevent = eventStack.Pop();
             myevent.Invoke();
         }
-        if (eventStack.Count == 0) {
-            Event_SwitchSideButton.Invoke();
-        }
 
+        Button_SetActive();
         ///// Debug Obj /////
         namestring.Remove(namestring[namestring.Count-1]); 
         PrintStack();
         /////////////////////
+    }
+
+    public void Button_SetActive() {
+
+        if (eventStack.Count == 0) {
+            Event_SwitchSideButton.Invoke();
+            Debug.Log("SwitchSideButton");
+        }
+        else {
+            Event_SwitchBackButton.Invoke();
+            Debug.Log("SwitchBackButton");
+        }
     }
 
     /////Debug Obj//////
@@ -221,6 +231,9 @@ public class UIController : MonoBehaviour
         string str = "";
         for (int i = 0; i < namestring.Count; i++) {
             str += "  >>  " + namestring[i];
+        }
+        if (namestring.Count == 0) {
+            // Debug.Log("Empty stack");
         }
         // Debug.Log(str);
         // Debug.Log("Count: " + eventStack.Count);
