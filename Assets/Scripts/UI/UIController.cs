@@ -122,12 +122,7 @@ public class UIController : MonoBehaviour
     // pretty sure there is a better way of doing this
     // To prevent "scrolling", need to refactor ScrollandPinch.cs , Seperate "Scrolling" funciton.
 
-    public void SetMovableFalse(){
-        ScrollAndPinch.movable = false;
-    }
-    public void SetMovableTrue(){
-        ScrollAndPinch.movable = true;
-    }
+
 
     public void AddStack_Close_SearchPopUp() {
         

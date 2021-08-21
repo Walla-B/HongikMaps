@@ -52,6 +52,7 @@ public class ScrollAndPinch : MonoBehaviour
     //if camera is null, put maincamera in Camera
 
     public static bool movable = true;
+    private bool lastFrameWasMovable = false;
     private void Awake() {
         if (Camera == null)
             Camera = Camera.main;
@@ -82,8 +83,6 @@ public class ScrollAndPinch : MonoBehaviour
             }
             if (Input.GetTouch(0).phase == TouchPhase.Moved || Input.GetTouch(0).phase == TouchPhase.Ended) {
                 
-                MoveCamera(Delta1 * movethershhold_factor, false);
-                //Camera.transform.Translate(Delta1 * movethershhold_factor, Space.World);
 
                 if (Input.GetTouch(0).phase == TouchPhase.Ended) {
                     Touchphase_endposition = Camera.transform.position;
@@ -93,9 +92,13 @@ public class ScrollAndPinch : MonoBehaviour
                         moveinertiatoggle = true;
                         elapsedtime = 0f;
                         //Debug.Log("Passed threshold");
+
+                        // if touch ended, last motion will be cancelled.
+                        Delta1 = Vector3.zero;
                     }
                 }
                 //Debug.Log("Endede"+ Delta1);
+                MoveCamera(Delta1 * movethershhold_factor, false);
             }
         }
         
@@ -110,7 +113,13 @@ public class ScrollAndPinch : MonoBehaviour
 
         if (moveinertiatoggle || zoominertiatoggle || rotateinertiatoggle == true) {
             elapsedtime += Time.deltaTime;
-            if (moveinertiatoggle && movable == true) {
+
+            if (lastFrameWasMovable == true) {
+                ClearInertiaToggleAndParam();
+                lastFrameWasMovable = false;
+            }
+
+            if (moveinertiatoggle == true) {
                 Camera.transform.position = Vector3.Lerp(Camera.transform.position , Touchphase_endposition + (Delta3 * 4f) ,100 * t * Time.deltaTime);
             }
             if (zoominertiatoggle == true) {
@@ -177,30 +186,58 @@ public class ScrollAndPinch : MonoBehaviour
             //var position = (pos1 + pos2) / 2;
             float rotatetheta = Vector3.SignedAngle(pos2 - pos1, pos2b - pos1b, Plane.normal);
 
-            if (zoom == 0 || zoom > 10)
-                return;
+            if (Input.GetTouch(0).phase == TouchPhase.Ended || Input.GetTouch(1).phase == TouchPhase.Ended) {
+                
 
-            if (zoomflag == true) {
-                ZoomCamera(zoom,(init_pivot-centerray));
-            }
-            else if (rotateflag == true) {
-                RotateCamera(init_pivot,rotatetheta);
+                //초기화 하기 전, 기존 motion에 따라 어떤 inertia motion을 가질것인지 결정함
+                if (zoomflag == true) {
+                    lastzoomfactor = zoom;
+                    lastzoommotion = (init_pivot-centerray);
+
+                    zoominertiatoggle = true;
+                    //Debug.Log("Zoominertia set to true");
+                    elapsedtime = 0f;
+                }
+                if (rotateflag == true) {
+                    lastrotatetheta = rotatetheta;
+
+                    rotateinertiatoggle = true;
+                    //Debug.Log("Rotateinertia set to true");
+                    elapsedtime = 0f;
+                }
+                ClearFlag();
+                ClearZoomOrRotateParam();
+
             }
             else {
-                ZorR = ZoomOrRotate(rotatetheta,zoom);
-                if (ZorR == 0) { //zoom
-                    zoomflag = true;
-                    rotateflag = false;
-                    //ZoomCamera(zoom);
+                if (zoom < 0.1f || zoom > 10)
+                    return;
+
+
+                if (zoomflag == true) {
+                    ZoomCamera(zoom,(init_pivot-centerray));
                 }
-                else if (ZorR == 1) { // rotate
-                    zoomflag = false;
-                    rotateflag = true;
-                    //RotateCamera(position,rotatetheta);
+                else if (rotateflag == true) {
+                    RotateCamera(init_pivot,rotatetheta);
                 }
-                else
-                    return; 
+                else {
+                    ZorR = ZoomOrRotate(rotatetheta,zoom);
+                    if (ZorR == 0) { //zoom
+                        zoomflag = true;
+                        rotateflag = false;
+                        //ZoomCamera(zoom);
+                    }
+                    else if (ZorR == 1) { // rotate
+                        zoomflag = false;
+                        rotateflag = true;
+                        //RotateCamera(position,rotatetheta);
+                    }
+                    else
+                        return;
+                }
+
             }
+
 
             //zoom camera for orthographic
             //TODO:
@@ -209,8 +246,10 @@ public class ScrollAndPinch : MonoBehaviour
 
 
             //둘중 한손가락이 떼어지면 초기화 
+            /*
             if (Input.GetTouch(0).phase == TouchPhase.Ended || Input.GetTouch(1).phase == TouchPhase.Ended) {
-                
+
+
                 //초기화 하기 전, 기존 motion에 따라 어떤 inertia motion을 가질것인지 결정함
                 if (zoomflag == true) {
                     lastzoomfactor = zoom;
@@ -230,6 +269,7 @@ public class ScrollAndPinch : MonoBehaviour
                 ClearFlag();
                 ClearZoomOrRotateParam();
             }
+            */
         }
     }
     
@@ -330,5 +370,13 @@ public class ScrollAndPinch : MonoBehaviour
         if (movable == true) {
             Camera.transform.RotateAround(position,Plane.normal, theta / 2);
         }
+    }
+
+    public void SetMovableTrue() {
+        movable = true;
+        lastFrameWasMovable = true;
+    }
+    public void SetMovableFalse() {
+        movable = false;
     }
 }
