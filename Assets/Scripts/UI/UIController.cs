@@ -213,11 +213,11 @@ public class UIController : MonoBehaviour
 
         if (eventStack.Count == 0) {
             Event_SwitchSideButton.Invoke();
-            Debug.Log("SwitchSideButton");
+            // Debug.Log("SwitchSideButton");
         }
         else {
             Event_SwitchBackButton.Invoke();
-            Debug.Log("SwitchBackButton");
+            //Debug.Log("SwitchBackButton");
         }
     }
 
