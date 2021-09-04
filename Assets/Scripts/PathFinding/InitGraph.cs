@@ -9,13 +9,7 @@ public class InitGraph
     public static Graph InitiateGraphFromData()
     {
         Graph graph = new Graph();
-        ///////////////////////////////
-        ///////////////////////////////
-        ///////////////////////////////
         var stream = CsvReader.Csvread("Node");
-        ///////////////////////////////
-        ///////////////////////////////
-        ///////////////////////////////
         string line;
         bool endOfFile = false;
 
@@ -33,16 +27,18 @@ public class InitGraph
             
             string[] data_lines = line.Split(',');
             //Debug.Log(data_lines[0]); 
+
             int nodeID = int.Parse(data_lines[0]);
-            
             Vector3 nodeTransform = new Vector3(float.Parse(data_lines[1]),float.Parse(data_lines[2]),float.Parse(data_lines[3]));
             string nodeName = data_lines[4].ToString();
             int nodeFloor = int.Parse(data_lines[5]);
             int nodeBuilding = int.Parse(data_lines[6]);
 
-            //Node tempnode = new Node(id:nodeID, position:nodeTransform, name: nodeName, building: nodeBuilding, floor: nodeFloor);
-
-            Node tempnode = new Node(nodeID,nodeTransform);
+            Node tempnode = new Node(id:nodeID, position:nodeTransform, name: nodeName, building: nodeBuilding, floor: nodeFloor);
+            
+            Debug.Log("NodeID : " + tempnode.NodeID + "NodeName : " + tempnode.NodeName + "NodeFloor : " + tempnode);
+            Debug.Log("Node successsfully added!");
+            //Node tempnode = new Node(nodeID,nodeTransform);
             graph.AddNodeToGraph(tempnode);
 
 

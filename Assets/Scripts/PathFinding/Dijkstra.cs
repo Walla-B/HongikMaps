@@ -100,11 +100,78 @@ public class Dijkstra
     }
 
     private static float CalCulateWeight (Node from, Node to) {
-        float distance = Vector3.Distance(from.Coordinate,to.Coordinate);
         
-        /*functions to manipulate weight by its factors needed. current is just weight = node*/
-        float weight = distance;
+        /*
+        BASE WEIGHT CALCULATION UNIT IS DISTANCE (meters).
+        this is to reduce calculations. so all factors must be converted into distance unit.
 
+        for example, "waiting for elevator" time costs  approx. 120 seconds,
+        weight = [Distance factor] + [120 seconds * walking speed(m/s)]
+        */
+
+        float weight = 0f;
+        // distance to weight
+        float distance = Vector3.Distance(from.Coordinate,to.Coordinate);
+        weight += distance;
+
+        // additonal factors
+
+        //psudocode
+        /*
+        if (both Node's attributes are "Stair") {
+
+            if (Check if it's z coord is significantly different) {
+
+                (Note that real stairs are not this steep.)
+
+                Z           S2          S3
+                            x-----------x
+                A          /|           |\
+                x         / |           | \
+                i        /  |           |  \
+                s       /   |           |   \
+                       /    |           |    \
+                + - - x- - -x - - - - - x- - -x - - - - -XY Plane
+                     S1     S1'         S3'   S4
+
+                On ascend S1 -> S2:
+                    weight *= movement factor Ka (Ka > 1.0)
+                On descend S3 -> S4:
+                    weight *= movement factor kd (Kd > 1.0?)
+                
+                S2 -> S3 are both "Stair" nodes, but ignored by if statement above
+
+            }
+            else if (both Node's attributes are "Slope") {
+                Same as calculating "Stair", just with different factor
+            }
+            else if ("to" Node's attribute is "Elevator") {
+                4F  ■
+                    |
+                3F  + -- >> out
+                    |
+                2F  +
+                    |
+                1F  □ 
+                    |
+                B1F + -- << in
+                    |
+                B2F ■
+
+                Elevators are bit different. Elevator nodes are positioned along same Z axis.
+
+                weight *= movement factor Ke (Ke < 1.0)
+                 
+                After calcuation, constant Cw has to be added for "waiting time" when entering elevator
+                if (from's attribute is "Non-Elevator") {
+                    weight += Cw (waiting time converted into dist)
+                }
+
+                
+            }
+
+        }
+        */
         return weight;
 
     }
