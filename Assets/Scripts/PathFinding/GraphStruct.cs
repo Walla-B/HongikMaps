@@ -37,8 +37,14 @@ public class Graph {
 
 public class Node {
     public int NodeID {get; private set;}
+    public int NodeFloor {get; private set;}
+
+    // Find Building - ID table in documentation
+    public int NodeBuilding {get; private set;}
     public Vector3 Coordinate {get; private set;}
+    public string NodeName {get; private set;}
     public List<Node> AdjNodes {get; private set;}
+    
     
     //pathfinding components
     public float Weight {get; private set;}
@@ -55,6 +61,16 @@ public class Node {
         AdjNodes = new List<Node>();
         this.NodeID = id; 
         this.Coordinate = position;
+    }
+    // Overloading Node Initalization methods
+    public Node (int id, int floor, int building, Vector3 position ,string name) {
+        AdjNodes = new List<Node>();
+        this.NodeID = id;
+        this.Coordinate = position;
+        this.NodeName = name;
+        this.NodeFloor = floor;
+        this.NodeBuilding = building;
+
     }
     //method to add edges
     public void AddAdjNode(Node node) {

@@ -20,6 +20,8 @@ public class InitGraph
         bool endOfFile = false;
 
         //Initializing NodeID and Node's posiiton data
+        // Node.csv's data structure:
+        // [(nodeID), (Vec posx, posy, posz), (nodename), (nodefloor), (nodebuilding)]
         while (!endOfFile) {
             line = stream.ReadLine();
             //Debug.Log(line);
@@ -34,9 +36,13 @@ public class InitGraph
             int nodeID = int.Parse(data_lines[0]);
             
             Vector3 nodeTransform = new Vector3(float.Parse(data_lines[1]),float.Parse(data_lines[2]),float.Parse(data_lines[3]));
+            string nodeName = data_lines[4].ToString();
+            int nodeFloor = int.Parse(data_lines[5]);
+            int nodeBuilding = int.Parse(data_lines[6]);
+
+            //Node tempnode = new Node(id:nodeID, position:nodeTransform, name: nodeName, building: nodeBuilding, floor: nodeFloor);
+
             Node tempnode = new Node(nodeID,nodeTransform);
-
-
             graph.AddNodeToGraph(tempnode);
 
 
