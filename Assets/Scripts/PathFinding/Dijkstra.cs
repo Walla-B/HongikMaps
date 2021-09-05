@@ -7,10 +7,12 @@ public class Dijkstra
     public static List<Node> Dijkstrasolve(Graph graph, int startnodeindex, int targetnodeindex) {
 
         double starttime = Time.realtimeSinceStartup;
+        int graphNodeCount = graph.TotalGraph.Count;
 
-        InitDistanceToMax(graph);
-        InitParentNodeToNULL(graph);
-        InitWalkableToTrue(graph);
+        InitWeightToMax(graph, graphNodeCount);
+        InitDistanceToZero(graph, graphNodeCount);
+        InitParentNodeToNULL(graph, graphNodeCount);
+        InitWalkableToTrue(graph, graphNodeCount);
 
         
         Node startnode = graph.TotalGraph[startnodeindex];
@@ -83,10 +85,15 @@ public class Dijkstra
                 Node node = neighnode;
 
                 if (unexplored.Contains(neighnode) && node.IsWalkAble) {
-                    float weight = CalCulateWeight(currentNode,neighnode);
+                    float distance;
+                    float weight = CalCulateWeight(currentNode,neighnode,out distance);
                     weight += currentNode.Weight;
+                    
+                    distance += currentNode.Distance;
 
                     if (weight < node.Weight) {
+
+                        node.SetDistance(distance);
                         node.SetWeight(weight);
                         node.SetParenNode(currentNode);
                     }
@@ -99,7 +106,7 @@ public class Dijkstra
         return targetNode;
     }
 
-    private static float CalCulateWeight (Node from, Node to) {
+    private static float CalCulateWeight (Node from, Node to, out float actualdist) {
         
         /*
         BASE WEIGHT CALCULATION UNIT IS DISTANCE (meters).
@@ -108,11 +115,18 @@ public class Dijkstra
         for example, "waiting for elevator" time costs  approx. 120 seconds,
         weight = [Distance factor] + [120 seconds * walking speed(m/s)]
         */
+        // TODO:
+        // Original distance should be preserved, to show the "Actual" distance to user
+
 
         float weight = 0f;
         // distance to weight
         float distance = Vector3.Distance(from.Coordinate,to.Coordinate);
+        
+        actualdist = distance;
+
         weight += distance;
+        Debug.Log(weight);
 
         // additonal factors
 
@@ -124,14 +138,14 @@ public class Dijkstra
 
                 (Note that real stairs are not this steep.)
 
-                Z           S2          S3
+                Y           S2          S3
                             x-----------x
                 A          /|           |\
                 x         / |           | \
                 i        /  |           |  \
                 s       /   |           |   \
                        /    |           |    \
-                + - - x- - -x - - - - - x- - -x - - - - -XY Plane
+                + - - x- - -x - - - - - x- - -x - - - - -XZ Plane
                      S1     S1'         S3'   S4
 
                 On ascend S1 -> S2:
@@ -175,18 +189,23 @@ public class Dijkstra
         return weight;
 
     }
-    private static void InitDistanceToMax (Graph graph) {
-        for (int i = 0 ; i < graph.TotalGraph.Count ; i++) {
+    private static void InitWeightToMax (Graph graph, int nodecount) {
+        for (int i = 0 ; i < nodecount ; i++) {
             graph.TotalGraph[i].SetWeight(float.MaxValue);
         }
     }
-    private static void InitParentNodeToNULL (Graph graph) {
-        for (int i = 0 ; i < graph.TotalGraph.Count ; i++) {
+    private static void InitDistanceToZero (Graph graph, int nodecount) {
+        for (int i = 0 ; i < nodecount ; i++) {
+            graph.TotalGraph[i].SetDistance(0f);
+        }
+    }
+    private static void InitParentNodeToNULL (Graph graph, int nodecount) {
+        for (int i = 0 ; i < nodecount ; i++) {
             graph.TotalGraph[i].SetParenNode(null);
         }
     }
-    private static void InitWalkableToTrue (Graph graph) {
-        for (int i = 0; i < graph.TotalGraph.Count ; i++) {
+    private static void InitWalkableToTrue (Graph graph, int nodecount) {
+        for (int i = 0; i < nodecount ; i++) {
             graph.TotalGraph[i].SetIsWalkable(true);
         }
     }

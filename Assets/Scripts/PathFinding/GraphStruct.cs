@@ -47,6 +47,7 @@ public class Node {
     
     
     //pathfinding components
+    public float Distance {get; private set;}
     public float Weight {get; private set;}
     public Node ParentNode {get; private set;}
     public bool IsWalkAble {get; private set;}
@@ -75,6 +76,9 @@ public class Node {
     //method to add edges
     public void AddAdjNode(Node node) {
         AdjNodes.Add(node);
+    }
+    public void SetDistance(float distance) {
+        this.Distance = distance;
     }
     public void SetWeight(float weight) {
         this.Weight = weight;

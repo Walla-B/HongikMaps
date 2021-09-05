@@ -34,12 +34,12 @@ public class OnClickFind : MonoBehaviour
         DebugGraph.DrawPath(path);
 
         //Round the Float distance to integer and add "m" to display unit
-        float totalweight = path[path.Count-1].Weight;
-        int totalseconds = Mathf.RoundToInt(totalweight/1.4f);
+        float totaldist = path[path.Count-1].Distance;
+        int totalseconds = Mathf.RoundToInt(totaldist/1.4f);
 
         //this pathmode should get information from outside and switch-case
         pathmode.text = "Minimum Distance";
-        outputdist.text = (Mathf.RoundToInt(totalweight)).ToString() + "m";
+        outputdist.text = (Mathf.RoundToInt(totaldist)).ToString() + "m";
         outputtime.text = (totalseconds/60).ToString() + "min " + (totalseconds%60).ToString() + "seconds";
         VisualizePathResult.VisulaizePath(path,nodeobject,edgeobject);
 
