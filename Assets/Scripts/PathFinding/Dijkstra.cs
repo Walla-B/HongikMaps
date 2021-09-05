@@ -85,10 +85,10 @@ public class Dijkstra
                 Node node = neighnode;
 
                 if (unexplored.Contains(neighnode) && node.IsWalkAble) {
-                    float distance;
-                    float weight = CalCulateWeight(currentNode,neighnode,out distance);
+                    float distance, weight;
+                    CalCulateWeight(currentNode,neighnode,out weight,out distance);
+
                     weight += currentNode.Weight;
-                    
                     distance += currentNode.Distance;
 
                     if (weight < node.Weight) {
@@ -106,7 +106,7 @@ public class Dijkstra
         return targetNode;
     }
 
-    private static float CalCulateWeight (Node from, Node to, out float actualdist) {
+    private static void CalCulateWeight (Node from, Node to,out float r_weight, out float r_distance) {
         
         /*
         BASE WEIGHT CALCULATION UNIT IS DISTANCE (meters).
@@ -119,14 +119,11 @@ public class Dijkstra
         // Original distance should be preserved, to show the "Actual" distance to user
 
 
-        float weight = 0f;
         // distance to weight
-        float distance = Vector3.Distance(from.Coordinate,to.Coordinate);
-        
-        actualdist = distance;
+        r_weight = 0f;
+        r_distance = Vector3.Distance(from.Coordinate,to.Coordinate);
 
-        weight += distance;
-        Debug.Log(weight);
+        r_weight += r_distance;
 
         // additonal factors
 
@@ -134,7 +131,7 @@ public class Dijkstra
         /*
         if (both Node's attributes are "Stair") {
 
-            if (Check if it's z coord is significantly different) {
+            if (Check if it's y coord is significantly different) {
 
                 (Note that real stairs are not this steep.)
 
@@ -186,7 +183,6 @@ public class Dijkstra
 
         }
         */
-        return weight;
 
     }
     private static void InitWeightToMax (Graph graph, int nodecount) {
