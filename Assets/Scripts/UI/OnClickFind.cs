@@ -29,6 +29,10 @@ public class OnClickFind : MonoBehaviour
         int sttnodeindex = int.Parse(pathfind_start.text);
         int tgtnodeindex = int.Parse(pathfind_target.text);
         List<Node> path = Dijkstra.Dijkstrasolve(graph,sttnodeindex,tgtnodeindex);
+
+        // Debug object, show found path in playmode with Debug.Drawline
+        DebugGraph.DrawPath(path);
+
         //Round the Float distance to integer and add "m" to display unit
         float totalweight = path[path.Count-1].Weight;
         int totalseconds = Mathf.RoundToInt(totalweight/1.4f);
