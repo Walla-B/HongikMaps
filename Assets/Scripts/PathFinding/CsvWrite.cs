@@ -10,20 +10,26 @@ public class CsvWrite : MonoBehaviour
     // might be not the cleanest code, but it works
     private Vector3 midpoint = new Vector3(Screen.width/2,Screen.height/2,0f);
 
+    //Raycasting Components
+    public Camera aDebugCamera;
+    private Ray myRay;
+    private RaycastHit hitray;
     // Checklist to initialize before making Graph
     // 0. Is Path of StreamWriter correct?
     // 1. Is total number of nodes correct? => const int numberofnode
     // 2. Is name of Gameobject used as nodes correct? => nameofobj
-    // 3. [OPTIONAL] size of csv's row is hard-coded into this script. 6 in this case.
-    //      if number of Node's adjacent node exceeds 6, you can change it.
+    // 3. [OPTIONAL] size of csv's row is hard-coded into this script. 8 in this case.
+    //      if number of Node's adjacent node exceeds 8, you can change it.
 
     const int numberofnode = 136;
     const string nameofobj = "Node";
 
     //Set this varibale to true before playmode if you want to export node's transform data to Node.csv
     [SerializeField]
-    private bool exportnodedata = false;
+    private bool enable_export = false;
 
+    [SerializeField]
+    private bool overwriteEdge = true;
 
     //Actually, this is just the row size of dataarray. max numbers of nodes can connect is maxconnectednods -1
     //setting maxconnectednodes manually is so annoying. Need to be fixed if possible
@@ -39,7 +45,7 @@ public class CsvWrite : MonoBehaviour
             //Debug.Log("positon of " + i + " : " + "x = " + temp.transform.position.x + "  y = " + temp.transform.position.y + "  z = " + temp.transform.position.z);
             data_lines = (i.ToString() + "," + temp.transform.position.x.ToString() + "," + temp.transform.position.y.ToString() + "," + temp.transform.position.z.ToString());
             //Debug.Log(data_lines);
-            if (exportnodedata == true) {
+            if (enable_export == true) {
                 sw.WriteLine(data_lines);
             }
         }
@@ -122,10 +128,6 @@ public class CsvWrite : MonoBehaviour
     GameObject[] twonodeobjects = new GameObject[2];
 
 
-    //Raycasting Components
-    public Camera DebugCamera;
-    private Ray myRay;
-    private RaycastHit hitray;
 
 
 
@@ -134,8 +136,6 @@ public class CsvWrite : MonoBehaviour
     private bool export = false;
 
     // check true to read data from edge.csv and use that data
-    [SerializeField]
-    private bool overwriteEdge = true;
     [SerializeField] 
     private bool removeedge = false;
     
@@ -154,7 +154,7 @@ public class CsvWrite : MonoBehaviour
     void Update(){
 
         //psudocode
-        myRay = DebugCamera.ScreenPointToRay(midpoint);
+        myRay = aDebugCamera.ScreenPointToRay(midpoint);
         
         //remove edges from exsiting grpah
         
