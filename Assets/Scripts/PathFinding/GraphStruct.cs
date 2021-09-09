@@ -38,9 +38,8 @@ public class Graph {
 public class Node {
     public int NodeID {get; private set;}
     public int NodeFloor {get; private set;}
-
-    // Find Building - ID table in documentation
     public int NodeBuilding {get; private set;}
+    public int NodeAttribute {get; private set;}
     public Vector3 Coordinate {get; private set;}
     public string NodeName {get; private set;}
     public List<Node> AdjNodes {get; private set;}

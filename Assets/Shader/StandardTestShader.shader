@@ -51,7 +51,10 @@ Shader "Custom/StandardTestShader"
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
             float2 uv = IN.uv_MainTex;
-            float saturation = _Saturation;
+            // uv.y += sin(uv.x*0.3 +_Time.y);
+            // Because uv coordinates are in 0~1, we can modify with many functions or
+            // values to show visualize math
+            float saturation = sin(uv.x * 10) * 2 + 1; 
             // Albedo comes from a texture tinted by color
             // Takes the pixel value of texture and multiply it with color
             // fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
