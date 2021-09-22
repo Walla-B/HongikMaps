@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class Dijkstra 
 {   
-    public static List<Node> Dijkstrasolve(Graph graph, int startnodeindex, int targetnodeindex) {
+
+    public static List<Node> Dijkstrasolve(Graph graph, int startnodeindex, int targetnodeindex, int pathmodeState) {
 
         double starttime = Time.realtimeSinceStartup;
         int graphNodeCount = graph.TotalGraph.Count;
@@ -19,7 +20,7 @@ public class Dijkstra
         Node targetnode = graph.TotalGraph[targetnodeindex];
 
         List<Node> result = new List<Node>();
-        Node resultnode = DijkstraAlgo(graph, startnode, targetnode);
+        Node resultnode = DijkstraAlgo(graph, startnode, targetnode, pathmodeState);
 
         while (resultnode != null) {
             result.Add(resultnode);
@@ -57,7 +58,7 @@ public class Dijkstra
     //it works fine, but time complexity of this algorithm is so slow.
     //Current time complexity is O(n^2)
     //using priority queue(Fibonacci heap), it can be reduced by O(n + elogn)
-    private static Node DijkstraAlgo (Graph graph, Node startingNode, Node targetNode) {
+    private static Node DijkstraAlgo (Graph graph, Node startingNode, Node targetNode, int pathmodeState) {
         
 
         List<Node> unexplored = new List<Node>();
@@ -86,7 +87,7 @@ public class Dijkstra
 
                 if (unexplored.Contains(neighnode) && node.IsWalkAble) {
                     float distance, weight;
-                    CalCulateWeight(currentNode,neighnode,out weight,out distance);
+                    CalCulateWeight(currentNode, neighnode, pathmodeState, out weight,out distance);
 
                     weight += currentNode.Weight;
                     distance += currentNode.Distance;
@@ -106,7 +107,8 @@ public class Dijkstra
         return targetNode;
     }
 
-    private static void CalCulateWeight (Node from, Node to,out float r_weight, out float r_distance) {
+
+    private static void CalCulateWeight (Node from, Node to,int pathmodeState, out float r_weight, out float r_distance) {
         
         /*
         BASE WEIGHT CALCULATION UNIT IS DISTANCE (meters).
@@ -124,6 +126,19 @@ public class Dijkstra
         r_distance = Vector3.Distance(from.Coordinate,to.Coordinate);
 
         r_weight += r_distance;
+
+        switch(pathmodeState) {
+            case 0: // Recommended
+                break;
+            case 1: // Shortest
+                break;
+            case 2: // Comfortable
+                break;
+            case 3: // Indoor
+                break;
+            case 4: // Stairless
+                break;
+        }
 
         // additonal factors
 

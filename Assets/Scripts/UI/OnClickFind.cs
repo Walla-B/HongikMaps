@@ -22,13 +22,16 @@ public class OnClickFind : MonoBehaviour
         DebugGraph.DrawGraph(graph);
         //Debug.Log("grpah initialized");
     }
+
+    public int pathmodeState;
     public void PathfindOnClick(){
 
         OnCallDestroyPrevious_PointerObj();
 
+
         int sttnodeindex = int.Parse(pathfind_start.text);
         int tgtnodeindex = int.Parse(pathfind_target.text);
-        List<Node> path = Dijkstra.Dijkstrasolve(graph,sttnodeindex,tgtnodeindex);
+        List<Node> path = Dijkstra.Dijkstrasolve(graph,sttnodeindex,tgtnodeindex,pathmodeState);
 
         // Debug object, show found path in playmode with Debug.Drawline
         DebugGraph.DrawPath(path);
