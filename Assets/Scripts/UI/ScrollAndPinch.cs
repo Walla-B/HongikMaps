@@ -20,15 +20,15 @@ public class ScrollAndPinch : MonoBehaviour
     [SerializeField]
     private float plane_y_position = -10;
     private float elapsedtime = 0f;
-    private bool moveinertiatoggle, zoominertiatoggle , rotateinertiatoggle = false;
+    private bool moveinertiatoggle, zoominertiatoggle , rotateinertiatoggle, leaninertiatoggle = false;
     private int recent_touch_is_two = 0;
     private Vector3 Touchphase_endposition ,Delta3 = Vector3.zero;
 
 
-    private bool zoomflag, rotateflag, initdataflag = false;
+    private bool zoomflag, rotateflag, leanflag, initdataflag = false;
 
     private float init_zoomdist, temp_zoomdist, init_theta = 0f;
-    private Vector3 init_pivot;
+    private Vector3 init_pivot, init_pivot_lean;
     private Vector2 ScreenCenter = new Vector2(Screen.width/2,Screen.height/2);
 
 
@@ -41,7 +41,7 @@ public class ScrollAndPinch : MonoBehaviour
     const float MAXZOOM = 30f;
     const float MINZOOM = 200f;
 
-    private float lastzoomfactor , lastrotatetheta = 0f;
+    private float lastzoomfactor , lastrotatetheta , lastleantheta = 0f;
     private Vector3 lastzoommotion = Vector3.zero;
     
     //TODO:
@@ -111,7 +111,7 @@ public class ScrollAndPinch : MonoBehaviour
         //OK//inertia motion이 진행되는 중 touchinput이 들어오면 interrupt해야함.
         //Camera Max zoom & Min zoom 고려해야함
 
-        if (moveinertiatoggle || zoominertiatoggle || rotateinertiatoggle == true) {
+        if (moveinertiatoggle || zoominertiatoggle || rotateinertiatoggle || leaninertiatoggle == true) {
             elapsedtime += Time.deltaTime;
 
             if (lastFrameWasMovable == true) {
@@ -140,7 +140,10 @@ public class ScrollAndPinch : MonoBehaviour
                 lastrotatetheta = Mathf.Lerp(lastrotatetheta, 0f, 10*Time.deltaTime);
                 RotateCamera(init_pivot,lastrotatetheta);
             }
-
+            if (leaninertiatoggle == true) {
+                lastleantheta = Mathf.Lerp(lastleantheta, 0f, 10*Time.deltaTime);
+                LeanCamera(init_pivot_lean, init_pivot_lean, lastleantheta);
+            }
             if(elapsedtime >= 2f) {
                 ClearInertiaToggleAndParam();
             }
@@ -153,11 +156,15 @@ public class ScrollAndPinch : MonoBehaviour
         //ZoomOrRotate() 가 아직 뭔가 미흡함. 적절한 값을 찾아야함.
 
         if (Input.touchCount >= 2) {
+            var screenpos1 = Input.GetTouch(0).position;
+            var screenpos2 = Input.GetTouch(1).position;
+            var screenpos1b = screenpos1 - Input.GetTouch(0).deltaPosition;
+            var screenpos2b = screenpos2 - Input.GetTouch(1).deltaPosition;
 
-            var pos1  = PlanePosition(Input.GetTouch(0).position);
-            var pos2  = PlanePosition(Input.GetTouch(1).position);
-            var pos1b = PlanePosition(Input.GetTouch(0).position - Input.GetTouch(0).deltaPosition);
-            var pos2b = PlanePosition(Input.GetTouch(1).position - Input.GetTouch(1).deltaPosition);
+            var pos1  = PlanePosition(screenpos1);
+            var pos2  = PlanePosition(screenpos2);
+            var pos1b = PlanePosition(screenpos1 - screenpos1b);
+            var pos2b = PlanePosition(screenpos2 - screenpos2b);
             var centerray = PlanePosition(ScreenCenter);
             int ZorR;
 
@@ -186,6 +193,8 @@ public class ScrollAndPinch : MonoBehaviour
             //var position = (pos1 + pos2) / 2;
             float rotatetheta = Vector3.SignedAngle(pos2 - pos1, pos2b - pos1b, Plane.normal);
 
+            float leantheta = (screenpos1b.y + screenpos2b.y) - (screenpos1.y + screenpos2.y);
+
             if (Input.GetTouch(0).phase == TouchPhase.Ended || Input.GetTouch(1).phase == TouchPhase.Ended) {
                 
 
@@ -205,6 +214,12 @@ public class ScrollAndPinch : MonoBehaviour
                     //Debug.Log("Rotateinertia set to true");
                     elapsedtime = 0f;
                 }
+                if (leanflag == true) {
+                    lastleantheta = leantheta;
+                    leaninertiatoggle = true;
+                    elapsedtime = 0f;
+                }
+
                 ClearFlag();
                 ClearZoomOrRotateParam();
 
@@ -365,12 +380,28 @@ public class ScrollAndPinch : MonoBehaviour
             //Move Camera DeltaPos*(1-zoom)
         }
     }
+    /*
+    protected void RotateCamera(Vector3 position , float theta) {
+        if (movable == true) {
+            Vector3 cross = position - Camera.transform.position;
+            cross.y = 0f;
+            Camera.transform.RotateAround(position,Vector3.up, theta / 2);
+        }
+    }
+    */
 
     protected void RotateCamera(Vector3 position , float theta) {
         if (movable == true) {
-            Camera.transform.RotateAround(position,Plane.normal, theta / 2);
+            Camera.transform.RotateAround(position, Vector3.up, theta / 2);
         }
     }
+
+    protected void LeanCamera(Vector3 position, Vector3 axis, float theta) {
+        if (movable == true) {
+            Camera.transform.RotateAround(position, axis, theta / 2);
+        }
+    }
+
 
     public void SetMovableTrue() {
         movable = true;

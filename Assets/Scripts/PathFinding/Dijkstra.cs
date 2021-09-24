@@ -1,9 +1,12 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Dijkstra 
 {   
+    public const float t_elevator_wait = 10f;
+    public float Stair_ascend_factor  = 1.3f;
+    public float Stair_descend_factor = 1.1f;
 
     public static List<Node> Dijkstrasolve(Graph graph, int startnodeindex, int targetnodeindex, int pathmodeState) {
 
@@ -126,19 +129,46 @@ public class Dijkstra
         r_distance = Vector3.Distance(from.Coordinate,to.Coordinate);
 
         r_weight += r_distance;
-
+        
+        // this will set the corresponding factors according to modes.
+        // if pathmodeState is set to shortest, there will be no more calculations required.
         switch(pathmodeState) {
             case 0: // Recommended
+                // no modification required.
                 break;
             case 1: // Shortest
-                break;
+                return;
             case 2: // Comfortable
-                break;
+                // Modify Stair_ascend_factor;
+                // Modify Stair_desced_factor;
             case 3: // Indoor
                 break;
             case 4: // Stairless
-                break;
+                 // Modify Stair_ascend_factor;
+                 // Modify Stair_descend_factor;
+                 break;
         }
+
+        if (from.NodeAttribute == 1 && to.NodeAttribute == 1) {
+            float z_diff = to.Coordinate.z - from.Coordinate.z;
+            if (z_diff >= .1f) { // Ascend
+                //r_weight *= Stair_ascend_factor;
+
+            }
+            else if (z_diff <= .1f) { // Descend
+                //r_weight *= Stair_descend_factor;
+            }
+            else {
+                ;
+            }
+        }
+
+        // if slope
+        else if (from.NodeAttribute == (byte)0x0000f && to.NodeAttribute == (byte)0x0000f) { 
+            
+        }
+        
+
 
         // additonal factors
 
@@ -146,7 +176,7 @@ public class Dijkstra
         /*
         if (both Node's attributes are "Stair") {
 
-            if (Check if it's y coord is significantly different) {
+            if (Check if it's y coord is significantly different) }
 
                 (Note that real stairs are not this steep.)
 
@@ -168,30 +198,31 @@ public class Dijkstra
                 S2 -> S3 are both "Stair" nodes, but ignored by if statement above
 
             }
-            else if (both Node's attributes are "Slope") {
-                Same as calculating "Stair", just with different factor
+
+        else if (both Node's attributes are "Slope") {
+            Same as calculating "Stair", just with different factor
+        }
+        else if ("to" Node's attribute is "Elevator") {
+            4F  ■
+                |
+            3F  + -- >> out
+                |
+            2F  +
+                |
+            1F  □ 
+                |
+            B1F + -- << in
+                |
+            B2F ■
+
+            Elevators are bit different. Elevator nodes are positioned along same Z axis.
+
+            weight *= movement factor Ke (Ke < 1.0)
+                
+            After calcuation, constant Cw has to be added for "waiting time" when entering elevator
+            if (from's attribute is "Non-Elevator") {
+                weight += Cw (waiting time converted into dist)
             }
-            else if ("to" Node's attribute is "Elevator") {
-                4F  ■
-                    |
-                3F  + -- >> out
-                    |
-                2F  +
-                    |
-                1F  □ 
-                    |
-                B1F + -- << in
-                    |
-                B2F ■
-
-                Elevators are bit different. Elevator nodes are positioned along same Z axis.
-
-                weight *= movement factor Ke (Ke < 1.0)
-                 
-                After calcuation, constant Cw has to be added for "waiting time" when entering elevator
-                if (from's attribute is "Non-Elevator") {
-                    weight += Cw (waiting time converted into dist)
-                }
 
                 
             }

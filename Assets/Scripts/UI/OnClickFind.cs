@@ -23,7 +23,7 @@ public class OnClickFind : MonoBehaviour
         //Debug.Log("grpah initialized");
     }
 
-    public int pathmodeState;
+    public int pathmodeState = 0;
     public void PathfindOnClick(){
 
         OnCallDestroyPrevious_PointerObj();
