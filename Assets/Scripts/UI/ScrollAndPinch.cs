@@ -27,8 +27,9 @@ public class ScrollAndPinch : MonoBehaviour
 
     private bool zoomflag, rotateflag, leanflag, initdataflag = false;
 
-    private float init_zoomdist, temp_zoomdist, init_theta = 0f;
-    private Vector3 init_pivot, init_pivot_lean;
+    private float init_zoomdist, temp_zoomdist, init_theta, init_lean_distacne = 0f;
+    // Init_pivot : Location of point for every rotational motion. initialized when two or more touches are initialized.
+    private Vector3 init_pivotpoint, init_axis_lean; // init_axis_rotate is always vector3.up , so not declared in this scope.
     private Vector2 ScreenCenter = new Vector2(Screen.width/2,Screen.height/2);
 
 
@@ -38,10 +39,11 @@ public class ScrollAndPinch : MonoBehaviour
     const float threshhold_ZOut = 0.87f;
     [SerializeField]
     const float threshhold_theta = 3.5f;
+    const float threshold_leanDistance = 100f;
     const float MAXZOOM = 30f;
     const float MINZOOM = 200f;
 
-    private float lastzoomfactor , lastrotatetheta , lastleantheta = 0f;
+    private float lastzoomfactor , lastrotatetheta , lastleandistance = 0f;
     private Vector3 lastzoommotion = Vector3.zero;
     
     //TODO:
@@ -131,18 +133,25 @@ public class ScrollAndPinch : MonoBehaviour
 
                 lastzoomfactor = Mathf.Lerp(lastzoomfactor , 1,10 * Time.deltaTime);
                 lastzoommotion = Vector3.Lerp(lastzoommotion, Vector3.zero, 10 * Time.deltaTime);
+
+
+
+
                 ZoomCamera(lastzoomfactor, lastzoommotion);
+
+
+
                 //Mathf.Lerp(lastzoomfactor,1,100 * Time.deltaTime);
                 //ZoomCamera(Mathf.Lerp(lastzoomfactor,1,100 * Time.deltaTime), Vector3.Lerp(lastzoommotion,Vector3.zero,100*Time.deltaTime));
                 //Debug.Log("Zoom_interp Working");
             }
             if (rotateinertiatoggle == true) {
                 lastrotatetheta = Mathf.Lerp(lastrotatetheta, 0f, 10*Time.deltaTime);
-                RotateCamera(init_pivot,lastrotatetheta);
+                RotateCamera(init_pivotpoint,lastrotatetheta);
             }
             if (leaninertiatoggle == true) {
-                lastleantheta = Mathf.Lerp(lastleantheta, 0f, 10*Time.deltaTime);
-                LeanCamera(init_pivot_lean, init_pivot_lean, lastleantheta);
+                lastleandistance = Mathf.Lerp(lastleandistance, 0f, 10*Time.deltaTime);
+                LeanCamera(init_pivotpoint, init_axis_lean, lastleandistance);
             }
             if(elapsedtime >= 2f) {
                 ClearInertiaToggleAndParam();
@@ -166,7 +175,8 @@ public class ScrollAndPinch : MonoBehaviour
             var pos1b = PlanePosition(screenpos1 - screenpos1b);
             var pos2b = PlanePosition(screenpos2 - screenpos2b);
             var centerray = PlanePosition(ScreenCenter);
-            int ZorR;
+
+            int motionState;
 
 
             //Debug.Log("DeltaPos1 : " + Input.GetTouch(0).deltaPosition);
@@ -180,7 +190,9 @@ public class ScrollAndPinch : MonoBehaviour
                 ClearInertiaToggleAndParam();
 
                 init_zoomdist = Vector3.Distance(pos1,pos2);
-                init_pivot = (pos1 + pos2) / 2;
+                init_pivotpoint = (pos1 + pos2) / 2;
+
+                init_axis_lean = Vector3.Normalize(Vector3.Cross(Vector3.up, Camera.transform.position - init_pivotpoint));
                 
                 temp_zoomdist = init_zoomdist;
                 
@@ -193,7 +205,7 @@ public class ScrollAndPinch : MonoBehaviour
             //var position = (pos1 + pos2) / 2;
             float rotatetheta = Vector3.SignedAngle(pos2 - pos1, pos2b - pos1b, Plane.normal);
 
-            float leantheta = (screenpos1b.y + screenpos2b.y) - (screenpos1.y + screenpos2.y);
+            float leandistance = (screenpos1b.y + screenpos2b.y) - (screenpos1.y + screenpos2.y);
 
             if (Input.GetTouch(0).phase == TouchPhase.Ended || Input.GetTouch(1).phase == TouchPhase.Ended) {
                 
@@ -201,7 +213,7 @@ public class ScrollAndPinch : MonoBehaviour
                 //초기화 하기 전, 기존 motion에 따라 어떤 inertia motion을 가질것인지 결정함
                 if (zoomflag == true) {
                     lastzoomfactor = zoom;
-                    lastzoommotion = (init_pivot-centerray);
+                    lastzoommotion = (init_pivotpoint-centerray);
 
                     zoominertiatoggle = true;
                     //Debug.Log("Zoominertia set to true");
@@ -215,13 +227,13 @@ public class ScrollAndPinch : MonoBehaviour
                     elapsedtime = 0f;
                 }
                 if (leanflag == true) {
-                    lastleantheta = leantheta;
+                    lastleandistance = leandistance;
                     leaninertiatoggle = true;
                     elapsedtime = 0f;
                 }
 
                 ClearFlag();
-                ClearZoomOrRotateParam();
+                ClearMotionParam();
 
             }
             else {
@@ -230,22 +242,33 @@ public class ScrollAndPinch : MonoBehaviour
 
 
                 if (zoomflag == true) {
-                    ZoomCamera(zoom,(init_pivot-centerray));
+                    ZoomCamera(zoom,(init_pivotpoint-centerray));
                 }
                 else if (rotateflag == true) {
-                    RotateCamera(init_pivot,rotatetheta);
+                    RotateCamera(init_pivotpoint,rotatetheta);
                 }
+                else if (leanflag == true) {
+                    LeanCamera(init_pivotpoint, init_axis_lean,leandistance);
+                }
+
                 else {
-                    ZorR = ZoomOrRotate(rotatetheta,zoom);
-                    if (ZorR == 0) { //zoom
-                        zoomflag = true;
+                    motionState = SelectMotion(rotatetheta,leandistance,zoom);
+                    if (motionState == 0) { //zoom
                         rotateflag = false;
+                        leanflag = false;
+                        zoomflag = true;
                         //ZoomCamera(zoom);
                     }
-                    else if (ZorR == 1) { // rotate
+                    else if (motionState == 1) { // rotate
+                        leanflag = false;
                         zoomflag = false;
                         rotateflag = true;
                         //RotateCamera(position,rotatetheta);
+                    }
+                    else if (motionState == 2) { // lean
+                        zoomflag = false;
+                        rotateflag = false;
+                        leanflag = true;
                     }
                     else
                         return;
@@ -316,13 +339,20 @@ public class ScrollAndPinch : MonoBehaviour
     protected void ClearFlag() {
         zoomflag = false;
         rotateflag = false;
+        leanflag = false;
         initdataflag = false;
     }
     //protected int Setmotion(float theta, float zoom, float leantheta)
-    protected int ZoomOrRotate(float theta, float zoom) {
+    protected int SelectMotion(float theta, float leanDistance, float zoom) {
          
         temp_zoomdist *= zoom;
         init_theta += theta;
+        init_lean_distacne += leanDistance;
+
+        Debug.Log("Temp_zoomdist : " + temp_zoomdist);
+        Debug.Log("init_theta : " + init_theta);
+        Debug.Log("init_lean_distance : " + init_lean_distacne);
+        
 
         if (temp_zoomdist >= threshhold_ZIn * init_zoomdist || temp_zoomdist <= threshhold_ZOut * init_zoomdist) {
             return 0;
@@ -330,28 +360,31 @@ public class ScrollAndPinch : MonoBehaviour
         else if (Mathf.Abs(init_theta) >= threshhold_theta) {
             return 1;    
         }
-      /*else if (Passes Camera Lean threshold) {
+        else if (Mathf.Abs(init_lean_distacne) >= threshold_leanDistance) {
             return 2;
-        } */
-
+        }
         else
-            return 2;
+            return 3;
             //return 3;
         
     }
-    protected void ClearZoomOrRotateParam() {
+    protected void ClearMotionParam() {
         init_theta = 0f;
         init_zoomdist = 0f;
+        init_lean_distacne = 0f;
         temp_zoomdist = 0f;
+        
     }
 
     protected void ClearInertiaToggleAndParam(){
         moveinertiatoggle = false;
         zoominertiatoggle = false;
         rotateinertiatoggle = false;
+        leaninertiatoggle = false;
 
         lastzoomfactor = 0f;
         lastrotatetheta = 0f;
+        lastleandistance = 0f;
         lastzoommotion = Vector3.zero;
     }
 
@@ -364,7 +397,7 @@ public class ScrollAndPinch : MonoBehaviour
         }
     }
     protected void ZoomCamera(float zoom,Vector3 deltaPos) {
-
+        Debug.Log("ZoomCamera Called");
         if (movable == true) { 
             //zoom limit, 더 나은 방법 존재 가능
             if (Camera.orthographicSize * zoom <= MAXZOOM) {
@@ -380,23 +413,16 @@ public class ScrollAndPinch : MonoBehaviour
             //Move Camera DeltaPos*(1-zoom)
         }
     }
-    /*
-    protected void RotateCamera(Vector3 position , float theta) {
-        if (movable == true) {
-            Vector3 cross = position - Camera.transform.position;
-            cross.y = 0f;
-            Camera.transform.RotateAround(position,Vector3.up, theta / 2);
-        }
-    }
-    */
 
     protected void RotateCamera(Vector3 position , float theta) {
+        Debug.Log("RotateCamera called");
         if (movable == true) {
             Camera.transform.RotateAround(position, Vector3.up, theta / 2);
         }
     }
 
     protected void LeanCamera(Vector3 position, Vector3 axis, float theta) {
+        Debug.Log("LeanCamera Called");
         if (movable == true) {
             Camera.transform.RotateAround(position, axis, theta / 2);
         }
