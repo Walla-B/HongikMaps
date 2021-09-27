@@ -74,6 +74,7 @@ public class ScrollAndPinch : MonoBehaviour
         //Scroll when touchcount is 1
         if (Input.touchCount == 1) {
 
+
             if (recent_touch_is_two >= 0) {
                 recent_touch_is_two -= 1;
                 return;   
@@ -179,6 +180,7 @@ public class ScrollAndPinch : MonoBehaviour
             int motionState;
 
 
+
             //Debug.Log("DeltaPos1 : " + Input.GetTouch(0).deltaPosition);
             //Debug.Log("DeltaPos2 : " + Input.GetTouch(1).deltaPosition);
 
@@ -189,7 +191,7 @@ public class ScrollAndPinch : MonoBehaviour
 
                 ClearInertiaToggleAndParam();
 
-                init_zoomdist = Vector3.Distance(pos1,pos2);
+                init_zoomdist = Vector2.Distance(screenpos1,screenpos2);
                 init_pivotpoint = (pos1 + pos2) / 2;
 
                 init_axis_lean = Vector3.Normalize(Vector3.Cross(Vector3.up, Camera.transform.position - init_pivotpoint));
@@ -201,9 +203,9 @@ public class ScrollAndPinch : MonoBehaviour
 
 
             //calc zoom for orthographic camera
-            var zoom = Vector3.Distance(pos1b,pos2b) / Vector3.Distance(pos1,pos2);
+            var zoom = Vector2.Distance(screenpos1b,screenpos2b) / Vector2.Distance(screenpos1,screenpos2);
             //var position = (pos1 + pos2) / 2;
-            float rotatetheta = Vector3.SignedAngle(pos2 - pos1, pos2b - pos1b, Plane.normal);
+            float rotatetheta = Vector2.SignedAngle(screenpos2b - screenpos1b, screenpos2 - screenpos1);
 
             float leandistance = (screenpos1b.y + screenpos2b.y) - (screenpos1.y + screenpos2.y);
 
@@ -349,10 +351,8 @@ public class ScrollAndPinch : MonoBehaviour
         init_theta += theta;
         init_lean_distacne += leanDistance;
 
-        Debug.Log("Temp_zoomdist : " + temp_zoomdist);
-        Debug.Log("init_theta : " + init_theta);
-        Debug.Log("init_lean_distance : " + init_lean_distacne);
-        
+        Debug.Log("Temp_zomdist = " + temp_zoomdist + ",  compare to : " + threshhold_ZIn * init_zoomdist + " and " + threshhold_ZOut * init_zoomdist);
+        Debug.Log("Mathf.Abs(init_theta) = " + Mathf.Abs(init_theta) + ",  Compared to : " + threshhold_theta);
 
         if (temp_zoomdist >= threshhold_ZIn * init_zoomdist || temp_zoomdist <= threshhold_ZOut * init_zoomdist) {
             return 0;
@@ -373,6 +373,7 @@ public class ScrollAndPinch : MonoBehaviour
         init_zoomdist = 0f;
         init_lean_distacne = 0f;
         temp_zoomdist = 0f;
+
         
     }
 
@@ -386,6 +387,8 @@ public class ScrollAndPinch : MonoBehaviour
         lastrotatetheta = 0f;
         lastleandistance = 0f;
         lastzoommotion = Vector3.zero;
+
+        Debug.Log("ClearInertiaToggleandParam Called");
     }
 
     protected void MoveCamera(Vector3 translation, bool isInertia) {
@@ -397,7 +400,6 @@ public class ScrollAndPinch : MonoBehaviour
         }
     }
     protected void ZoomCamera(float zoom,Vector3 deltaPos) {
-        Debug.Log("ZoomCamera Called");
         if (movable == true) { 
             //zoom limit, 더 나은 방법 존재 가능
             if (Camera.orthographicSize * zoom <= MAXZOOM) {
@@ -415,16 +417,27 @@ public class ScrollAndPinch : MonoBehaviour
     }
 
     protected void RotateCamera(Vector3 position , float theta) {
-        Debug.Log("RotateCamera called");
         if (movable == true) {
             Camera.transform.RotateAround(position, Vector3.up, theta / 2);
         }
     }
 
     protected void LeanCamera(Vector3 position, Vector3 axis, float theta) {
-        Debug.Log("LeanCamera Called");
+
+        // Lean angle shodld be more than 30 deg to Plane's normal vector
+
         if (movable == true) {
-            Camera.transform.RotateAround(position, axis, theta / 2);
+            float leanAngle = Vector3.SignedAngle(Camera.transform.position - position, Vector3.up, axis);
+            Debug.Log("LeanAngle : " + leanAngle);
+
+            // Angle Restrictions
+            if (leanAngle > 5f || leanAngle < -60f) {
+
+                // Inertia motions should be removed to overshoot threshhold and get stuck.
+                ClearInertiaToggleAndParam();
+                return;
+            }
+            Camera.transform.RotateAround(position, axis, theta / 10);
         }
     }
 
