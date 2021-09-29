@@ -29,7 +29,7 @@ public class ScrollAndPinch : MonoBehaviour
 
     private float init_zoomdist, temp_zoomdist, init_theta, init_lean_distacne = 0f;
     // Init_pivot : Location of point for every rotational motion. initialized when two or more touches are initialized.
-    private Vector3 init_pivotpoint, init_axis_lean; // init_axis_rotate is always vector3.up , so not declared in this scope.
+    private Vector3 centerrayPlaneposition, init_pivotpoint, init_axis_lean; // init_axis_rotate is always vector3.up , so not declared in this scope.
     private Vector2 ScreenCenter = new Vector2(Screen.width/2,Screen.height/2);
 
 
@@ -38,7 +38,7 @@ public class ScrollAndPinch : MonoBehaviour
     [SerializeField]
     const float threshhold_ZOut = 0.87f;
     [SerializeField]
-    const float threshhold_theta = 3.5f;
+    const float threshhold_theta = 5.0f;
     const float threshold_leanDistance = 100f;
     const float MAXZOOM = 30f;
     const float MINZOOM = 200f;
@@ -62,7 +62,6 @@ public class ScrollAndPinch : MonoBehaviour
 
     private void Update() { 
 
-        
         //TODO: 움직이는 것도 일정 treshold 설정해서 클릭 동작과 구분할수 있어야함
         //Update Plane
         if (Input.touchCount >= 1)
@@ -152,7 +151,7 @@ public class ScrollAndPinch : MonoBehaviour
             }
             if (leaninertiatoggle == true) {
                 lastleandistance = Mathf.Lerp(lastleandistance, 0f, 10*Time.deltaTime);
-                LeanCamera(init_pivotpoint, init_axis_lean, lastleandistance);
+                LeanCamera(centerrayPlaneposition, init_axis_lean, lastleandistance);
             }
             if(elapsedtime >= 2f) {
                 ClearInertiaToggleAndParam();
@@ -175,7 +174,6 @@ public class ScrollAndPinch : MonoBehaviour
             var pos2  = PlanePosition(screenpos2);
             var pos1b = PlanePosition(screenpos1 - screenpos1b);
             var pos2b = PlanePosition(screenpos2 - screenpos2b);
-            var centerray = PlanePosition(ScreenCenter);
 
             int motionState;
 
@@ -194,9 +192,11 @@ public class ScrollAndPinch : MonoBehaviour
                 init_zoomdist = Vector2.Distance(screenpos1,screenpos2);
                 init_pivotpoint = (pos1 + pos2) / 2;
 
-                init_axis_lean = Vector3.Normalize(Vector3.Cross(Vector3.up, Camera.transform.position - init_pivotpoint));
-                
                 temp_zoomdist = init_zoomdist;
+
+                centerrayPlaneposition = PlanePosition(ScreenCenter);
+
+                init_axis_lean = Vector3.Normalize(Vector3.Cross(Vector3.up, Camera.transform.position - centerrayPlaneposition));
                 
                 initdataflag = true;
             }
@@ -215,7 +215,7 @@ public class ScrollAndPinch : MonoBehaviour
                 //초기화 하기 전, 기존 motion에 따라 어떤 inertia motion을 가질것인지 결정함
                 if (zoomflag == true) {
                     lastzoomfactor = zoom;
-                    lastzoommotion = (init_pivotpoint-centerray);
+                    lastzoommotion = (init_pivotpoint-centerrayPlaneposition);
 
                     zoominertiatoggle = true;
                     //Debug.Log("Zoominertia set to true");
@@ -244,13 +244,13 @@ public class ScrollAndPinch : MonoBehaviour
 
 
                 if (zoomflag == true) {
-                    ZoomCamera(zoom,(init_pivotpoint-centerray));
+                    ZoomCamera(zoom,(init_pivotpoint-centerrayPlaneposition));
                 }
                 else if (rotateflag == true) {
                     RotateCamera(init_pivotpoint,rotatetheta);
                 }
                 else if (leanflag == true) {
-                    LeanCamera(init_pivotpoint, init_axis_lean,leandistance);
+                    LeanCamera(centerrayPlaneposition, init_axis_lean,leandistance);
                 }
 
                 else {
@@ -351,8 +351,10 @@ public class ScrollAndPinch : MonoBehaviour
         init_theta += theta;
         init_lean_distacne += leanDistance;
 
-        Debug.Log("Temp_zomdist = " + temp_zoomdist + ",  compare to : " + threshhold_ZIn * init_zoomdist + " and " + threshhold_ZOut * init_zoomdist);
-        Debug.Log("Mathf.Abs(init_theta) = " + Mathf.Abs(init_theta) + ",  Compared to : " + threshhold_theta);
+        Debug.Log("Leandistance : " + init_lean_distacne);
+
+        // Debug.Log("Temp_zomdist = " + temp_zoomdist + ",  compare to : " + threshhold_ZIn * init_zoomdist + " and " + threshhold_ZOut * init_zoomdist);
+        // Debug.Log("Mathf.Abs(init_theta) = " + Mathf.Abs(init_theta) + ",  Compared to : " + threshhold_theta);
 
         if (temp_zoomdist >= threshhold_ZIn * init_zoomdist || temp_zoomdist <= threshhold_ZOut * init_zoomdist) {
             return 0;
@@ -374,7 +376,7 @@ public class ScrollAndPinch : MonoBehaviour
         init_lean_distacne = 0f;
         temp_zoomdist = 0f;
 
-        Debug.Log("ClearMotionParam Called");
+        //Debug.Log("ClearMotionParam Called");
     }
 
     protected void ClearInertiaToggleAndParam(){
@@ -388,7 +390,7 @@ public class ScrollAndPinch : MonoBehaviour
         lastleandistance = 0f;
         lastzoommotion = Vector3.zero;
 
-        Debug.Log("ClearInertiaToggleandParam Called");
+        // Debug.Log("ClearInertiaToggleandParam Called");
     }
 
     protected void MoveCamera(Vector3 translation, bool isInertia) {
@@ -397,6 +399,7 @@ public class ScrollAndPinch : MonoBehaviour
         //Set Threshold to define it as "moving"
         if (movable == true) {
             Camera.transform.Translate(translation, Space.World);
+            // ClearInertiaToggleAndParam();
         }
     }
     protected void ZoomCamera(float zoom,Vector3 deltaPos) {
@@ -419,6 +422,7 @@ public class ScrollAndPinch : MonoBehaviour
     protected void RotateCamera(Vector3 position , float theta) {
         if (movable == true) {
             Camera.transform.RotateAround(position, Vector3.up, theta / 2);
+            // Debug.Log("rotatecamera called");
         }
     }
 
@@ -427,12 +431,15 @@ public class ScrollAndPinch : MonoBehaviour
         if (movable == true) {
             float nextleanAngle = Vector3.SignedAngle(Camera.transform.position - position, Vector3.up, axis) - (screendistance / 10);
 
-            Debug.Log("nextLeanAngle : " + nextleanAngle);
-            Debug.Log("screenditance : " + screendistance);
-            
             if (nextleanAngle < -60f || nextleanAngle > -5f) {
                 return;
             }
+
+            //Debug.DrawRay(position,Camera.transform.position - position, Color.red, 2f);
+            
+            //Debug.Log("rotateAxis = " + axis);
+            
+            //Debug.DrawRay(position,axis * 100,Color.green, 3f);
 
             // Edge case : before rotatearound.leanAngle was on threshhold but after is not.
             Camera.transform.RotateAround(position, axis, screendistance / 10);
