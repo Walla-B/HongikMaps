@@ -44,7 +44,7 @@ Development Progress
        + Scrolling :heavy_check_mark:
        + Pinching :heavy_check_mark:
        + Dragging :heavy_check_mark:
-       + Leaning :x:
+       + Leaning :heavy_check_mark:
        + Motion interpolation for smooth movement :heavy_check_mark:
     + Basic UI System
        + Set system structure for UI hierarchy :heavy_check_mark:
