@@ -207,7 +207,7 @@ public class ScrollAndPinch : MonoBehaviour
             //var position = (pos1 + pos2) / 2;
             float rotatetheta = Vector2.SignedAngle(screenpos2b - screenpos1b, screenpos2 - screenpos1);
 
-            float leandistance = (screenpos1b.y + screenpos2b.y) - (screenpos1.y + screenpos2.y);
+            float leandistance = Input.GetTouch(0).deltaPosition.y + Input.GetTouch(1).deltaPosition.y;
 
             if (Input.GetTouch(0).phase == TouchPhase.Ended || Input.GetTouch(1).phase == TouchPhase.Ended) {
                 
@@ -374,7 +374,7 @@ public class ScrollAndPinch : MonoBehaviour
         init_lean_distacne = 0f;
         temp_zoomdist = 0f;
 
-        
+        Debug.Log("ClearMotionParam Called");
     }
 
     protected void ClearInertiaToggleAndParam(){
@@ -422,22 +422,20 @@ public class ScrollAndPinch : MonoBehaviour
         }
     }
 
-    protected void LeanCamera(Vector3 position, Vector3 axis, float theta) {
-
-        // Lean angle shodld be more than 30 deg to Plane's normal vector
+    protected void LeanCamera(Vector3 position, Vector3 axis, float screendistance) {
 
         if (movable == true) {
-            float leanAngle = Vector3.SignedAngle(Camera.transform.position - position, Vector3.up, axis);
-            Debug.Log("LeanAngle : " + leanAngle);
+            float nextleanAngle = Vector3.SignedAngle(Camera.transform.position - position, Vector3.up, axis) - (screendistance / 10);
 
-            // Angle Restrictions
-            if (leanAngle > 5f || leanAngle < -60f) {
-
-                // Inertia motions should be removed to overshoot threshhold and get stuck.
-                ClearInertiaToggleAndParam();
+            Debug.Log("nextLeanAngle : " + nextleanAngle);
+            Debug.Log("screenditance : " + screendistance);
+            
+            if (nextleanAngle < -60f || nextleanAngle > -5f) {
                 return;
             }
-            Camera.transform.RotateAround(position, axis, theta / 10);
+
+            // Edge case : before rotatearound.leanAngle was on threshhold but after is not.
+            Camera.transform.RotateAround(position, axis, screendistance / 10);
         }
     }
 
